@@ -274,7 +274,7 @@ function buildPicker(k){const t=$(k+'_ptype');Object.keys(CABLE_DB).forEach(tp=>
 function fillSizes(k){const tp=$(k+'_ptype').value,s=$(k+'_psize');s.innerHTML='';CABLE_DB[tp].forEach(r=>{const o=document.createElement('option');o.value=r[2];o.dataset.size=r[0];const core=r[1]&&r[1]!=='1'?' ×'+r[1]:'';o.textContent=r[0]+(tp==='Audio 92xx'?'':' mm²')+core+' → '+r[2]+'mm';s.appendChild(o);});}
 
 // ===== conduit fill (วสท.2564) =====
-function recMetal(col,minA){for(const r of CONDUIT_TH){const a=r[2+col];if(a!=null&&a>=minA)return r[0]+' ('+r[1]+'mm)';}return 'เกิน 6"';}
+function recMetal(col,minA){let last='';for(const r of CONDUIT_TH){const a=r[2+col];if(a==null)continue;last=r[0];if(a>=minA)return r[0]+' ('+r[1]+'mm)';}return 'เกิน '+last;}
 function recHDPE(minA){for(const r of HDPE){if(r[1]>=minA)return 'OD '+r[0]+'mm';}return '>200mm';}
 function calcCF(){const used=totArea('cf');const n=totQty('cf');const ff=n<=1?53:(n===2?31:40);const rsv=+$('cf_rsv').value;const minA=used/(ff/100)/(1-rsv);
   $('cf_used').innerHTML=fmt(used,0)+' <small>mm²</small>';
