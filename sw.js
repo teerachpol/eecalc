@@ -1,4 +1,4 @@
-const CACHE = 'eical-v1';
+const CACHE = 'eical-v4';
 const ASSETS = [
   './',
   './index.html',

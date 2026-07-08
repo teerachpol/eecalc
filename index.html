@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <title>E&I Calc — เครื่องคำนวณงานระบบไฟฟ้า</title>
-
-<!-- PWA / iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,139 +11,91 @@
 <meta name="theme-color" content="#13171A">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
-
 <style>
-:root{
-  --bg:#13171A; --panel:#1B2125; --well:#222A2F; --line:#303A40;
-  --ink:#EAEFF1; --dim:#889199; --amber:#FFB020; --amber-dim:#C98A2E;
-  --fault:#FF5D5D; --ok:#46C98B;
-  --safe-top:env(safe-area-inset-top,0px);
-  --safe-bot:env(safe-area-inset-bottom,0px);
-}
+:root{--bg:#13171A;--panel:#1B2125;--well:#222A2F;--line:#303A40;--ink:#EAEFF1;--dim:#889199;--amber:#FFB020;--amber-dim:#C98A2E;--fault:#FF5D5D;--ok:#46C98B;--safe-top:env(safe-area-inset-top,0px);--safe-bot:env(safe-area-inset-bottom,0px);}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
-body{
-  background:var(--bg); color:var(--ink);
-  font-family:-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
-  -webkit-font-smoothing:antialiased; line-height:1.4;
-  padding-bottom:var(--safe-bot);
-  overscroll-behavior-y:none;
-}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased;line-height:1.4;padding-bottom:var(--safe-bot);overscroll-behavior-y:none;}
 .app{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
-
-/* Header */
-header{
-  padding:calc(var(--safe-top) + 16px) 20px 14px;
-  border-bottom:1px solid var(--line);
-  position:sticky;top:0;background:linear-gradient(var(--bg),rgba(19,23,26,.92));
-  backdrop-filter:blur(8px);z-index:20;
-}
+header{padding:calc(var(--safe-top) + 16px) 20px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:linear-gradient(var(--bg),rgba(19,23,26,.92));backdrop-filter:blur(8px);z-index:20;}
 .brand{display:flex;align-items:center;gap:11px}
-.mark{
-  width:34px;height:34px;border-radius:9px;background:var(--panel);
-  border:1px solid var(--line);display:grid;place-items:center;flex:0 0 auto;
-  box-shadow:inset 0 0 0 1px rgba(255,176,32,.06);
-}
+.mark{width:34px;height:34px;border-radius:9px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;flex:0 0 auto;box-shadow:inset 0 0 0 1px rgba(255,176,32,.06);}
 .mark svg{width:19px;height:19px;filter:drop-shadow(0 0 5px rgba(255,176,32,.5))}
 .brand h1{font-size:16px;margin:0;font-weight:650;letter-spacing:.2px}
 .brand .sub{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-top:1px}
-
-/* Tabs */
 .tabs{display:flex;gap:6px;padding:12px 14px 4px;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{
-  flex:0 0 auto;padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;
-  background:var(--panel);border:1px solid var(--line);color:var(--dim);
-  cursor:pointer;transition:.15s;white-space:nowrap;
-}
+.tab{flex:0 0 auto;padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;background:var(--panel);border:1px solid var(--line);color:var(--dim);cursor:pointer;transition:.15s;white-space:nowrap;}
 .tab.on{background:rgba(255,176,32,.12);border-color:var(--amber);color:var(--amber)}
-
-/* Panels */
 main{flex:1;padding:8px 14px 40px}
-.card{display:none;animation:fade .25s ease}
-.card.on{display:block}
+.card{display:none;animation:fade .25s ease}.card.on{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--amber-dim);font-weight:700;margin:14px 2px 10px}
-
-/* Inputs */
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.grid .full{grid-column:1/-1}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid .full{grid-column:1/-1}
 .field label{display:block;font-size:12px;color:var(--dim);margin:0 0 5px 2px;font-weight:600}
-.field input,.field select{
-  width:100%;padding:12px 12px;border-radius:11px;font-size:16px;font-weight:600;
-  background:var(--well);border:1px solid var(--line);color:var(--ink);
-  font-family:inherit;appearance:none;-webkit-appearance:none;
-}
+.field input,.field select{width:100%;padding:12px;border-radius:11px;font-size:16px;font-weight:600;background:var(--well);border:1px solid var(--line);color:var(--ink);font-family:inherit;appearance:none;-webkit-appearance:none;}
 .field input:focus,.field select:focus{outline:none;border-color:var(--amber);background:#262F35}
 .field .u{position:relative}
-.field .u::after{content:attr(data-u);position:absolute;right:12px;top:50%;transform:translateY(-50%);
-  color:var(--dim);font-size:13px;font-weight:600;pointer-events:none}
-.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23889199' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 13px center;padding-right:32px}
-
-/* Readout */
-.readout{
-  margin-top:18px;background:#0E1315;border:1px solid var(--line);border-radius:16px;
-  padding:18px 18px 16px;position:relative;overflow:hidden;
-}
-.readout::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.012) 3px 4px)}
+.field .u::after{content:attr(data-u);position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:13px;font-weight:600;pointer-events:none}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23889199' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:32px}
+.readout{margin-top:18px;background:#0E1315;border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;position:relative;overflow:hidden;}
+.readout::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.012) 3px 4px)}
 .readout .rlabel{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);font-weight:700}
-.readout .rmain{
-  font-family:ui-monospace,"SF Mono","JetBrains Mono",Menlo,monospace;
-  font-size:44px;font-weight:700;color:var(--amber);letter-spacing:1px;line-height:1.05;margin:6px 0 2px;
-  text-shadow:0 0 16px rgba(255,176,32,.35);font-variant-numeric:tabular-nums;
-}
-.readout .rmain small{font-size:19px;color:var(--amber-dim);margin-left:5px;text-shadow:none}
+.readout .rmain{font-family:ui-monospace,"SF Mono","JetBrains Mono",Menlo,monospace;font-size:40px;font-weight:700;color:var(--amber);letter-spacing:1px;line-height:1.05;margin:6px 0 2px;text-shadow:0 0 16px rgba(255,176,32,.35);font-variant-numeric:tabular-nums;}
+.readout .rmain small{font-size:18px;color:var(--amber-dim);margin-left:5px;text-shadow:none}
 .rrows{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;display:grid;gap:9px}
 .rrow{display:flex;justify-content:space-between;align-items:baseline;font-size:14px}
 .rrow .k{color:var(--dim)}
 .rrow .v{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-weight:650;color:var(--ink);font-variant-numeric:tabular-nums}
 .rrow .v small{color:var(--dim);font-weight:500;margin-left:3px}
-
-/* status chip */
-.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;
-  font-size:12px;font-weight:700;margin-top:14px}
+.rrow.hi .v{color:var(--amber)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;font-size:12px;font-weight:700;margin-top:14px}
 .chip.pass{background:rgba(70,201,139,.14);color:var(--ok);border:1px solid rgba(70,201,139,.4)}
 .chip.fail{background:rgba(255,93,93,.14);color:var(--fault);border:1px solid rgba(255,93,93,.4)}
 .chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor}
 .note{font-size:12px;color:var(--dim);margin-top:12px;line-height:1.55}
 .seg{display:flex;background:var(--well);border:1px solid var(--line);border-radius:11px;padding:3px;gap:3px}
-.seg button{flex:1;padding:9px;border:none;background:transparent;color:var(--dim);
-  font-family:inherit;font-size:14px;font-weight:600;border-radius:8px;cursor:pointer}
+.seg button{flex:1;padding:9px;border:none;background:transparent;color:var(--dim);font-family:inherit;font-size:14px;font-weight:600;border-radius:8px;cursor:pointer}
 .seg button.on{background:rgba(255,176,32,.15);color:var(--amber)}
 footer{text-align:center;color:var(--dim);font-size:11px;padding:20px 16px 30px;line-height:1.7}
+.cablehdr{display:flex;justify-content:space-between;align-items:center;margin:16px 2px 8px}
+.cablehdr .t{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--amber-dim);font-weight:700}
+.cablehdr .sub{font-size:12px;color:var(--dim);font-weight:600}
+.cablerow{display:grid;grid-template-columns:1fr 62px 40px;gap:8px;align-items:center;margin-bottom:8px}
+.cablerow input{width:100%;padding:10px;border-radius:10px;font-size:15px;font-weight:600;background:var(--well);border:1px solid var(--line);color:var(--ink);font-family:inherit}
+.cablerow input:focus{outline:none;border-color:var(--amber)}
+.cablerow .del{height:40px;border-radius:10px;border:1px solid var(--line);background:var(--well);color:var(--fault);font-size:18px;cursor:pointer;font-weight:700}
+.rowcap{display:grid;grid-template-columns:1fr 62px 40px;gap:8px;margin:0 2px 4px}
+.rowcap span{font-size:11px;color:var(--dim);font-weight:600}
+.rowcap3{display:grid;grid-template-columns:78px 1fr 56px 40px;gap:8px;margin:0 2px 4px}
+.rowcap3 span{font-size:11px;color:var(--dim);font-weight:600}
+.cablerow.three{grid-template-columns:78px 1fr 56px 40px}
+.picker{display:grid;grid-template-columns:1.1fr 1.2fr auto;gap:8px;margin-top:6px}
+.picker select{padding:10px;border-radius:10px;font-size:13px;font-weight:600;background:var(--well);border:1px solid var(--line);color:var(--ink);font-family:inherit;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23889199' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:26px}
+.picker button{padding:10px 14px;border-radius:10px;border:1px solid var(--amber);background:rgba(255,176,32,.12);color:var(--amber);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;white-space:nowrap}
 </style>
 </head>
 <body>
 <div class="app">
-  <header>
-    <div class="brand">
-      <div class="mark">
-        <svg viewBox="0 0 24 24" fill="#FFB020"><path d="M13 2 4 14h6l-1.5 8L20 9h-6z"/></svg>
-      </div>
-      <div>
-        <h1>E&amp;I Calc</h1>
-        <div class="sub">วสท. / IEC Field Tool</div>
-      </div>
-    </div>
-  </header>
+  <header><div class="brand">
+    <div class="mark"><svg viewBox="0 0 24 24" fill="#FFB020"><path d="M13 2 4 14h6l-1.5 8L20 9h-6z"/></svg></div>
+    <div><h1>E&amp;I Calc</h1><div class="sub">วสท. 2564 / IEC Field Tool</div></div>
+  </div></header>
 
   <div class="tabs" id="tabs">
     <button class="tab on" data-t="cb">สาย &amp; CB</button>
     <button class="tab" data-t="vd">แรงดันตก</button>
     <button class="tab" data-t="mtr">มอเตอร์</button>
     <button class="tab" data-t="gnd">กราวด์</button>
+    <button class="tab" data-t="cf">ท่อร้อยสาย</button>
+    <button class="tab" data-t="ww">Wireway</button>
+    <button class="tab" data-t="ct">Tray/Ladder</button>
   </div>
 
   <main>
-    <!-- ============ CB / CABLE ============ -->
     <section class="card on" id="card-cb">
       <div class="eyebrow">เลือกขนาด CB &amp; สายไฟ</div>
-      <div class="seg full" id="cb-mode">
-        <button class="on" data-m="kw">ป้อนโหลด (kW)</button>
-        <button data-m="a">ป้อนกระแส (A)</button>
-      </div>
+      <div class="seg full" id="cb-mode"><button class="on" data-m="kw">ป้อนโหลด (kW)</button><button data-m="a">ป้อนกระแส (A)</button></div>
       <div class="grid" style="margin-top:10px">
         <div class="field" id="cb-load-kw"><label>โหลด P</label><div class="u" data-u="kW"><input id="cb_kw" type="number" inputmode="decimal" value="15"></div></div>
         <div class="field" id="cb-load-a" style="display:none"><label>กระแส I_B</label><div class="u" data-u="A"><input id="cb_a" type="number" inputmode="decimal" value="25"></div></div>
@@ -156,19 +106,13 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:20px 16px 30px;
         <div class="field"><label>Cg (กลุ่มสาย)</label><input id="cb_cg" type="number" inputmode="decimal" value="0.80" step="0.01"></div>
         <div class="field full"><label>Ci (ฉนวน/ท่อ)</label><input id="cb_ci" type="number" inputmode="decimal" value="1.00" step="0.01"></div>
       </div>
-      <div class="readout">
-        <div class="rlabel">CB ที่แนะนำ (I_N)</div>
-        <div class="rmain" id="cb_out">—<small>A</small></div>
-        <div class="rrows">
-          <div class="rrow"><span class="k">กระแสออกแบบ I_B</span><span class="v" id="cb_ib">—</span></div>
-          <div class="rrow"><span class="k">ตัวคูณลด รวม</span><span class="v" id="cb_k">—</span></div>
-          <div class="rrow"><span class="k">ampacity สายที่ต้องการ (I_t)</span><span class="v" id="cb_it">—</span></div>
-        </div>
-        <div class="note">เงื่อนไข วสท.: I_B ≤ I_N ≤ I_Z &nbsp;•&nbsp; I_t = I_N / (Ca·Cg·Ci) — เลือกสายจากตาราง ampacity ที่ค่า ≥ I_t</div>
-      </div>
+      <div class="readout"><div class="rlabel">CB ที่แนะนำ (I_N)</div><div class="rmain" id="cb_out">—<small>A</small></div>
+        <div class="rrows"><div class="rrow"><span class="k">กระแสออกแบบ I_B</span><span class="v" id="cb_ib">—</span></div>
+        <div class="rrow"><span class="k">ตัวคูณลด รวม</span><span class="v" id="cb_k">—</span></div>
+        <div class="rrow"><span class="k">ampacity สายที่ต้องการ (I_t)</span><span class="v" id="cb_it">—</span></div></div>
+        <div class="note">เงื่อนไข วสท.: I_B ≤ I_N ≤ I_Z • I_t = I_N / (Ca·Cg·Ci)</div></div>
     </section>
 
-    <!-- ============ VOLTAGE DROP ============ -->
     <section class="card" id="card-vd">
       <div class="eyebrow">แรงดันตก (Voltage Drop)</div>
       <div class="grid">
@@ -178,19 +122,13 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:20px 16px 30px;
         <div class="field"><label>ระยะสาย L</label><div class="u" data-u="m"><input id="vd_l" type="number" inputmode="decimal" value="120"></div></div>
         <div class="field full"><label>ค่าจากตารางสาย (mV/A/m)</label><input id="vd_mv" type="number" inputmode="decimal" value="2.8" step="0.1"></div>
       </div>
-      <div class="readout">
-        <div class="rlabel">แรงดันตก</div>
-        <div class="rmain" id="vd_pct">—<small>%</small></div>
-        <div class="rrows">
-          <div class="rrow"><span class="k">แรงดันตก (โวลต์)</span><span class="v" id="vd_volt">—</span></div>
-          <div class="rrow"><span class="k">แรงดันปลายสาย</span><span class="v" id="vd_end">—</span></div>
-        </div>
+      <div class="readout"><div class="rlabel">แรงดันตก</div><div class="rmain" id="vd_pct">—<small>%</small></div>
+        <div class="rrows"><div class="rrow"><span class="k">แรงดันตก (โวลต์)</span><span class="v" id="vd_volt">—</span></div>
+        <div class="rrow"><span class="k">แรงดันปลายสาย</span><span class="v" id="vd_end">—</span></div></div>
         <span class="chip" id="vd_chip"><span class="dot"></span><span id="vd_ct">—</span></span>
-        <div class="note">เกณฑ์ วสท.: แรงดันตกรวมจากหม้อแปลง/ต้นทาง ≤ 5% (แนะนำวงจรย่อย ≤ 3%). ค่า mV/A/m อ่านจากคอลัมน์ที่ตรงกับระบบ 1φ/3φ ของตารางผู้ผลิตสาย</div>
-      </div>
+        <div class="note">เกณฑ์ วสท.: แรงดันตกรวม ≤ 5% (แนะนำวงจรย่อย ≤ 3%)</div></div>
     </section>
 
-    <!-- ============ MOTOR ============ -->
     <section class="card" id="card-mtr">
       <div class="eyebrow">กระแสมอเตอร์ &amp; การสตาร์ท</div>
       <div class="grid">
@@ -198,25 +136,14 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:20px 16px 30px;
         <div class="field"><label>แรงดัน V</label><div class="u" data-u="V"><input id="m_v" type="number" inputmode="decimal" value="400"></div></div>
         <div class="field"><label>Power Factor</label><input id="m_pf" type="number" inputmode="decimal" value="0.86" step="0.01"></div>
         <div class="field"><label>ประสิทธิภาพ η</label><div class="u" data-u="%"><input id="m_eff" type="number" inputmode="decimal" value="89"></div></div>
-        <div class="field full"><label>วิธีสตาร์ท</label><select id="m_start">
-          <option value="6">DOL (Direct On Line) ×6</option>
-          <option value="2">Star–Delta (Y-Δ) ×2</option>
-          <option value="3">Soft Starter ×3</option>
-          <option value="1.5">VSD / Inverter ×1.5</option>
-        </select></div>
+        <div class="field full"><label>วิธีสตาร์ท</label><select id="m_start"><option value="6">DOL (Direct On Line) ×6</option><option value="2">Star–Delta (Y-Δ) ×2</option><option value="3">Soft Starter ×3</option><option value="1.5">VSD / Inverter ×1.5</option></select></div>
       </div>
-      <div class="readout">
-        <div class="rlabel">กระแสพิกัด (FLC)</div>
-        <div class="rmain" id="m_flc">—<small>A</small></div>
-        <div class="rrows">
-          <div class="rrow"><span class="k">กระแสสตาร์ท (โดยประมาณ)</span><span class="v" id="m_start_i">—</span></div>
-          <div class="rrow"><span class="k">CB/OL ตั้งต้น (~1.25×FLC)</span><span class="v" id="m_cb">—</span></div>
-        </div>
-        <div class="note">FLC = P / (√3·V·cosφ·η) สำหรับ 3 เฟส. กระแสสตาร์ทเป็นค่าประมาณตาม locked-rotor ทั่วไป — ตรวจสอบกับ nameplate/Code letter จริงของมอเตอร์</div>
-      </div>
+      <div class="readout"><div class="rlabel">กระแสพิกัด (FLC)</div><div class="rmain" id="m_flc">—<small>A</small></div>
+        <div class="rrows"><div class="rrow"><span class="k">กระแสสตาร์ท (โดยประมาณ)</span><span class="v" id="m_start_i">—</span></div>
+        <div class="rrow"><span class="k">ขนาดสายขั้นต่ำ (≥1.25×FLC)</span><span class="v" id="m_cb">—</span></div></div>
+        <div class="note">FLC = P/(√3·V·cosφ·η) วสท.บทที่ 6. สายวงจรมอเตอร์เดี่ยว ≥1.25×FLC (วสท. 6.6). ขนาด CB/ป้องกันลัดวงจรคิดแยกตาม วสท. 6.7 (สูงกว่านี้มาก). กระแสสตาร์ทเป็นค่าประมาณ ตรวจสอบ nameplate/Code letter จริง</div></div>
     </section>
 
-    <!-- ============ EARTHING ============ -->
     <section class="card" id="card-gnd">
       <div class="eyebrow">ความต้านทานหลักดิน (Earthing Rod)</div>
       <div class="grid">
@@ -226,100 +153,175 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:20px 16px 30px;
         <div class="field"><label>จำนวนแท่ง n</label><input id="g_n" type="number" inputmode="numeric" value="1"></div>
         <div class="field full"><label>ประสิทธิภาพกลุ่มแท่ง F (0.5–1.0)</label><input id="g_f" type="number" inputmode="decimal" value="1.0" step="0.05"></div>
       </div>
-      <div class="readout">
-        <div class="rlabel">ความต้านทานรวม R</div>
-        <div class="rmain" id="g_out">—<small>Ω</small></div>
-        <div class="rrows">
-          <div class="rrow"><span class="k">R ต่อแท่งเดี่ยว</span><span class="v" id="g_single">—</span></div>
-        </div>
+      <div class="readout"><div class="rlabel">ความต้านทานรวม R</div><div class="rmain" id="g_out">—<small>Ω</small></div>
+        <div class="rrows"><div class="rrow"><span class="k">R ต่อแท่งเดี่ยว</span><span class="v" id="g_single">—</span></div></div>
         <span class="chip" id="g_chip"><span class="dot"></span><span id="g_ct">—</span></span>
-        <div class="note">สูตร Dwight: R = ρ/(2πL)·[ln(8L/d) − 1]. กลุ่มแท่ง: R_รวม ≈ R/(n·F). เกณฑ์ทั่วไป วสท. ≤ 5 Ω (ระบบป้องกันฟ้าผ่า/สื่อสารอาจต้องการ ≤ 1 Ω)</div>
+        <div class="note">Dwight: R = ρ/(2πL)·[ln(8L/d)−1]. กลุ่มแท่ง R_รวม ≈ R/(n·F). เกณฑ์ วสท. ≤ 5 Ω</div></div>
+    </section>
+
+    <!-- CONDUIT FILL — วสท.2564 -->
+    <section class="card" id="card-cf">
+      <div class="eyebrow">ท่อร้อยสาย — วสท. 022001-64 ข้อ 5.8 / ตาราง 5-3</div>
+      <div class="grid">
+        <div class="field"><label>ชนิดท่อ (แสดงผลหลัก)</label><select id="cf_type"><option value="0">EMT</option><option value="1">IMC</option><option value="2">RSC</option><option value="3">PVC</option><option value="4">HDPE</option></select></div>
+        <div class="field"><label>เผื่อพื้นที่สำรอง</label><select id="cf_rsv"><option value="0">ไม่เผื่อ (ตาม FF)</option><option value="0.2">เผื่อ 20%</option></select></div>
       </div>
+      <div class="cablehdr"><span class="t">รายการสายในท่อ</span><span class="sub" id="cf_sub">รวม 0 mm²</span></div>
+      <div class="rowcap"><span>OD ทั้งเส้น (mm)</span><span>จำนวน</span><span></span></div>
+      <div id="cf_rows"></div>
+      <div class="picker"><select id="cf_ptype"></select><select id="cf_psize"></select><button data-add="cf">+ เพิ่ม</button></div>
+      <div class="readout"><div class="rlabel">ขนาดท่อขั้นต่ำ (<span id="cf_tname">EMT</span>)</div><div class="rmain" id="cf_main">—</div>
+        <div class="rrows">
+          <div class="rrow"><span class="k">Σ พื้นที่สายรวม</span><span class="v" id="cf_used">—</span></div>
+          <div class="rrow"><span class="k">จำนวนเส้น → Fill Factor</span><span class="v" id="cf_ff">—</span></div>
+          <div class="rrow"><span class="k">พื้นที่ท่อขั้นต่ำที่ต้องการ</span><span class="v" id="cf_min">—</span></div>
+          <div class="rrow hi"><span class="k">EMT</span><span class="v" id="cf_r0">—</span></div>
+          <div class="rrow hi"><span class="k">IMC</span><span class="v" id="cf_r1">—</span></div>
+          <div class="rrow hi"><span class="k">RSC</span><span class="v" id="cf_r2">—</span></div>
+          <div class="rrow hi"><span class="k">PVC</span><span class="v" id="cf_r3">—</span></div>
+          <div class="rrow hi"><span class="k">HDPE (PN6)</span><span class="v" id="cf_r4">—</span></div>
+        </div>
+        <div class="note">Fill Factor วสท. ตาราง 5-3: 1 เส้น 53% • 2 เส้น 31% • ≥3 เส้น 40%. ท่อโลหะ มอก.770-2531 • PVC มอก.216 • HDPE Class-I/PN6 DIN 8074/75. OD สายจากฐานข้อมูล BCC/มอก.11 (แก้ไขเองได้)</div></div>
+    </section>
+
+    <section class="card" id="card-ww">
+      <div class="eyebrow">Wireway / รางเดินสาย</div>
+      <div class="grid">
+        <div class="field full"><label>ขนาดราง</label><select id="ww_size"></select></div>
+        <div class="field" id="ww-wbox" style="display:none"><label>กว้าง W</label><div class="u" data-u="mm"><input id="ww_w" type="number" inputmode="decimal" value="100"></div></div>
+        <div class="field" id="ww-hbox" style="display:none"><label>สูง H</label><div class="u" data-u="mm"><input id="ww_h" type="number" inputmode="decimal" value="100"></div></div>
+      </div>
+      <div class="cablehdr"><span class="t">รายการสายในราง</span><span class="sub" id="ww_sub">รวม 0 mm²</span></div>
+      <div class="rowcap"><span>OD สาย (mm)</span><span>จำนวน</span><span></span></div>
+      <div id="ww_rows"></div>
+      <div class="picker"><select id="ww_ptype"></select><select id="ww_psize"></select><button data-add="ww">+ เพิ่ม</button></div>
+      <div class="readout"><div class="rlabel">% การใช้พื้นที่ราง</div><div class="rmain" id="ww_pct">—<small>%</small></div>
+        <div class="rrows">
+          <div class="rrow"><span class="k">พื้นที่รางทั้งหมด</span><span class="v" id="ww_area">—</span></div>
+          <div class="rrow"><span class="k">พื้นที่ใช้ได้ (20%)</span><span class="v" id="ww_use">—</span></div>
+          <div class="rrow"><span class="k">พื้นที่สายรวม</span><span class="v" id="ww_used">—</span></div>
+          <div class="rrow"><span class="k">จำนวนสาย (derate ถ้า &gt;30)</span><span class="v" id="ww_n">—</span></div>
+        </div>
+        <span class="chip" id="ww_chip"><span class="dot"></span><span id="ww_ct">—</span></span>
+        <div class="note">เกณฑ์ NEC 376.22 / วสท.: พื้นที่สายรวม ≤ 20% ของพื้นที่ราง</div></div>
+    </section>
+
+    <section class="card" id="card-ct">
+      <div class="eyebrow">Cable Tray/Ladder — วสท. 022001-64 ข้อ 5.15.4 / ตาราง 5-7</div>
+      <div class="grid">
+        <div class="field full"><label>ชนิดราง</label><select id="ct_type"><option value="ladder">Ladder (บันได)</option><option value="vent">Ventilated (ระบายอากาศ)</option><option value="solid">Solid bottom (ก้นทึบ)</option></select></div>
+      </div>
+      <div class="cablehdr"><span class="t">รายการเคเบิลบนราง</span><span class="sub" id="ct_sub">รวม 0 mm²</span></div>
+      <div class="rowcap3"><span>ขนาด(ตร.มม.)</span><span>OD (mm)</span><span>จำนวน</span><span></span></div>
+      <div id="ct_rows"></div>
+      <div class="picker"><select id="ct_ptype"></select><select id="ct_psize"></select><button data-add="ct">+ เพิ่ม</button></div>
+      <div class="readout"><div class="rlabel">ขนาดรางที่แนะนำ (ต่ำสุดที่พอ)</div><div class="rmain" id="ct_main">—</div>
+        <div class="rrows">
+          <div class="rrow"><span class="k">กรณีคำนวณ (วสท. 5.15.4.1)</span><span class="v" id="ct_case">—</span></div>
+          <div class="rrow"><span class="k">Σ OD สาย ≥95 (วางชั้นเดียว)</span><span class="v" id="ct_sod">—</span></div>
+          <div class="rrow"><span class="k">Σ พื้นที่สาย &lt;95</span><span class="v" id="ct_sarea">—</span></div>
+          <div class="rrow"><span class="k">เกณฑ์ ตาราง 5-7 ที่ใช้</span><span class="v" id="ct_tbl">—</span></div>
+        </div>
+        <span class="chip" id="ct_chip"><span class="dot"></span><span id="ct_ct">—</span></span>
+        <div class="note">วสท. 5.15.4: สาย ≥95 ตร.มม. วางชั้นเดียว Σd ≤ กว้างราง (5.15.4.1.1) • สาย &lt;95 ใช้ Σพท. ≤ ตาราง 5-7 (5.15.4.1.2) • ผสม X−30.5·Σd ≥ Σพท. (5.15.4.1.3). Ventilated ใช้เกณฑ์เดียวกับ Ladder</div></div>
     </section>
   </main>
-
-  <footer>
-    E&amp;I Calc · v1.0 — เครื่องมือช่วยประเมิน ตรวจสอบกับมาตรฐาน วสท./IEC และวิศวกรผู้รับผิดชอบก่อนนำไปใช้จริง
-  </footer>
+  <footer>E&amp;I Calc · v2.1 — อ้างอิง วสท.2564 / มอก. / IEC — เครื่องมือช่วยประเมิน ตรวจสอบกับวิศวกรผู้รับผิดชอบก่อนใช้จริง</footer>
 </div>
 
 <script>
+const CABLE_DB={"CV-AWA 1C":[["1.5","1",11.5],["2.5","1",12.0],["4","1",12.5],["6","1",13.0],["10","1",13.5],["16","1",14.5],["25","1",16.5],["35","1",17.5],["50","1",20.0],["70","1",21.5],["95","1",23.5],["120","1",26.0],["150","1",27.5],["185","1",30.0],["240","1",33.0],["300","1",35.5],["400","1",40.0],["500","1",44.0],["630","1",48.5],["800","1",54.5]],"CV 1C":[["1.5","1",6.5],["2.5","1",7.0],["4","1",7.5],["6","1",8.0],["10","1",9.0],["16","1",9.5],["25","1",11.5],["35","1",12.5],["50","1",14.0],["70","1",15.5],["95","1",17.5],["120","1",19.5],["150","1",21.5],["185","1",23.5],["240","1",26.5],["300","1",29.0],["400","1",32.5],["500","1",36.5],["630","1",41.0],["800","1",45.5]],"CV":[["1.5","2",11.0],["2.5","2",11.5],["4","2",12.5],["6","2",14.0],["10","2",15.0],["16","2",17.0],["25","2",20.5],["35","2",22.5],["50","2",26.0],["70","2",29.5],["95","2",33.0],["120","2",36.5],["150","2",40.5],["185","2",45.0],["240","2",51.0],["300","2",56.0],["400","2",63.5],["1.5","3",11.5],["2.5","3",12.0],["4","3",13.5],["6","3",14.5],["10","3",16.0],["16","3",18.0],["25","3",21.5],["35","3",24.0],["50","3",27.5],["70","3",31.5],["95","3",35.5],["120","3",39.5],["150","3",43.5],["185","3",48.5],["240","3",55.0],["300","3",60.5],["400","3",68.0],["1.5","4",12.0],["2.5","4",13.0],["4","4",14.5],["6","4",16.0],["10","4",17.5],["16","4",19.5],["25","4",24.0],["35","4",26.5],["50","4",30.5],["70","4",35.0],["95","4",39.0],["120","4",44.0],["150","4",48.5],["185","4",54.0],["240","4",61.0],["300","4",67.5],["400","4",76.0]],"CVV-SWA":[["0.5","2",14.0],["0.75","2",14.5],["1","2",14.5],["1.5","2",15.5],["2.5","2",16.0],["4","2",19.0],["6","2",20.0],["0.5","3",14.5],["0.75","3",15.0],["1","3",15.0],["1.5","3",16.0],["2.5","3",17.0],["4","3",20.0],["6","3",21.0],["0.5","4",15.0],["0.75","4",15.5],["1","4",16.0],["1.5","4",16.5],["2.5","4",18.5],["4","4",21.0],["6","4",22.5],["0.5","5",16.0],["0.75","5",16.5],["1","5",17.0],["1.5","5",18.5],["2.5","5",19.5],["4","5",22.5],["6","5",24.0],["0.5","6",17.0],["0.75","6",17.5],["1","6",18.5],["1.5","6",19.5],["2.5","6",21.0],["4","6",24.0],["6","6",26.5],["0.5","7",17.0],["0.75","7",17.5],["1","7",18.5],["1.5","7",19.5],["2.5","7",21.0],["4","7",24.0],["6","7",26.5],["0.5","8",18.5],["0.75","8",19.0],["1","8",19.5],["1.5","8",20.5],["2.5","8",22.0],["4","8",26.0],["6","8",28.0],["0.5","9",19.5],["0.75","9",20.0],["1","9",20.5],["1.5","9",21.5],["2.5","9",23.5],["4","9",27.5],["6","9",29.5],["0.5","10",20.5],["0.75","10",21.0],["1","10",22.0],["1.5","10",23.0],["2.5","10",25.5],["4","10",29.5],["6","10",32.0],["0.5","11",21.0],["0.75","11",21.5],["1","11",22.5],["1.5","11",23.5],["2.5","11",26.0],["4","11",30.0],["6","11",33.0],["0.5","12",21.0],["0.75","12",21.5],["1","12",22.5],["1.5","12",23.5],["2.5","12",26.0],["4","12",30.0],["6","12",33.0],["0.5","13",21.5],["0.75","13",22.5],["1","13",23.0],["1.5","13",25.0],["2.5","13",27.0],["4","13",31.5],["6","13",34.0],["0.5","14",21.5],["0.75","14",22.5],["1","14",23.0],["1.5","14",25.0],["2.5","14",27.0],["4","14",31.5],["6","14",34.0],["0.5","15",22.5],["0.75","15",23.5],["1","15",24.0],["1.5","15",26.0],["2.5","15",28.0],["4","15",33.0],["6","15",36.0],["0.5","16",22.5],["0.75","16",23.5],["1","16",24.0],["1.5","16",26.0],["2.5","16",28.0],["4","16",33.0],["6","16",36.0],["0.5","17",23.0],["0.75","17",24.0],["1","17",25.5],["1.5","17",27.0],["2.5","17",29.0],["4","17",34.5],["6","17",38.5],["0.5","18",23.0],["0.75","18",24.0],["1","18",25.5],["1.5","18",27.0],["2.5","18",29.0],["4","18",34.5],["6","18",38.5],["0.5","19",23.0],["0.75","19",24.0],["1","19",25.5],["1.5","19",27.0],["2.5","19",29.0],["4","19",34.5],["6","19",38.5],["0.5","20",24.0],["0.75","20",26.0],["1","20",26.5],["1.5","20",28.0],["2.5","20",30.5],["4","20",36.0],["6","20",40.5],["0.5","21",24.0],["0.75","21",26.0],["1","21",26.5],["1.5","21",28.0],["2.5","21",30.5],["4","21",36.0],["6","21",40.5],["0.5","22",25.5],["0.75","22",26.5],["1","22",27.5],["1.5","22",29.0],["2.5","22",32.0],["4","22",38.5],["6","22",42.5],["0.5","23",25.5],["0.75","23",26.5],["1","23",27.5],["1.5","23",29.0],["2.5","23",32.0],["4","23",38.5],["6","23",42.5],["0.5","24",26.5],["0.75","24",28.0],["1","24",28.5],["1.5","24",30.5],["2.5","24",33.5],["4","24",41.0],["6","24",44.5],["0.5","25",27.0],["0.75","25",28.5],["1","25",29.0],["1.5","25",31.0],["2.5","25",34.0],["4","25",41.5],["6","25",45.5],["0.5","26",27.0],["0.75","26",28.5],["1","26",29.0],["1.5","26",31.0],["2.5","26",34.0],["4","26",41.5],["6","26",45.5],["0.5","27",27.0],["0.75","27",28.5],["1","27",29.0],["1.5","27",31.0],["2.5","27",34.0],["4","27",41.5],["6","27",45.5],["0.5","28",27.5],["0.75","28",29.0],["1","28",30.0],["1.5","28",32.0],["2.5","28",35.0],["4","28",43.0],["6","28",47.0],["0.5","29",27.5],["0.75","29",29.0],["1","29",30.0],["1.5","29",32.0],["2.5","29",35.0],["4","29",43.0],["6","29",47.0],["0.5","30",27.5],["0.75","30",29.0],["1","30",30.0],["1.5","30",32.0],["2.5","30",35.0],["4","30",43.0],["6","30",47.0]],"CV-SWA":[["1.5","2C+PE",16.0],["2.5","2C+PE",17.0],["4","2C+PE",19.0],["6","2C+PE",20.5],["10","2C+PE",22.0],["16","2C+PE",24.5],["25","2C+PE",27.5],["35","2C+PE",29.0],["50","2C+PE",33.0],["70","2C+PE",37.5],["95","2C+PE",42.0],["120","2C+PE",46.0],["150","2C+PE",50.0],["185","2C+PE",55.5],["240","2C+PE",61.0],["300","2C+PE",67.0],["400","2C+PE",74.0],["1.5","3C+PE",17.0],["2.5","3C+PE",19.0],["4","3C+PE",20.5],["6","3C+PE",21.5],["10","3C+PE",23.0],["16","3C+PE",26.0],["25","3C+PE",29.5],["35","3C+PE",32.0],["50","3C+PE",37.0],["70","3C+PE",41.5],["95","3C+PE",45.5],["120","3C+PE",51.5],["150","3C+PE",55.5],["185","3C+PE",61.0],["240","3C+PE",68.0],["300","3C+PE",73.5],["400","3C+PE",83.5],["1.5","4C+PE",19.0],["2.5","4C+PE",20.0],["4","4C+PE",21.5],["6","4C+PE",23.0],["10","4C+PE",25.5],["16","4C+PE",28.0],["25","4C+PE",32.0],["35","4C+PE",34.5],["50","4C+PE",40.5],["70","4C+PE",45.0],["95","4C+PE",51.0],["120","4C+PE",56.5],["150","4C+PE",61.0],["185","4C+PE",67.5],["240","4C+PE",75.0],["300","4C+PE",83.5],["400","4C+PE",92.0],["1.5","2",15.0],["2.5","2",15.5],["4","2",16.5],["6","2",18.0],["10","2",20.0],["16","2",22.0],["25","2",26.5],["35","2",28.5],["50","2",32.0],["70","2",35.5],["95","2",40.5],["120","2",44.0],["150","2",48.0],["185","2",54.5],["240","2",60.0],["300","2",66.0],["400","2",73.0],["1.5","3",15.5],["2.5","3",16.5],["4","3",17.5],["6","3",18.5],["10","3",21.0],["16","3",23.5],["25","3",27.5],["35","3",30.0],["50","3",34.0],["70","3",39.0],["95","3",43.0],["120","3",47.0],["150","3",52.5],["185","3",57.5],["240","3",64.5],["300","3",70.0],["400","3",77.5],["1.5","4",16.0],["2.5","4",17.0],["4","4",18.5],["6","4",21.0],["10","4",22.5],["16","4",25.5],["25","4",29.5],["35","4",32.5],["50","4",37.0],["70","4",42.5],["95","4",47.0],["120","4",53.0],["150","4",57.5],["185","4",63.5],["240","4",70.5],["300","4",77.0],["400","4",87.0]],"RE-2X(St)YSWA":[["0.5","1P",10.7],["0.75","1P",11.5],["1","1P",11.7],["1.3","1P",12.1],["1.5","1P",12.3],["2.5","1P",13.5],["0.5","2P",13.4],["0.75","2P",14.6],["1","2P",14.9],["1.3","2P",15.5],["1.5","2P",15.9],["2.5","2P",18.0],["0.5","4P",14.9],["0.75","4P",16.1],["1","4P",16.5],["1.3","4P",17.5],["1.5","4P",17.9],["2.5","4P",21.0],["0.5","5P",15.8],["0.75","5P",17.1],["1","5P",17.7],["1.3","5P",18.6],["1.5","5P",19.1],["2.5","5P",22.6],["0.5","6P",16.7],["0.75","6P",18.4],["1","6P",18.9],["1.3","6P",19.8],["1.5","6P",21.0],["2.5","6P",24.2],["0.5","8P",18.3],["0.75","8P",20.7],["1","8P",21.5],["1.3","8P",22.6],["1.5","8P",23.2],["2.5","8P",26.8],["0.5","10P",20.7],["0.75","10P",22.9],["1","10P",23.5],["1.3","10P",24.8],["1.5","10P",25.7],["2.5","10P",29.8],["0.5","12P",21.4],["0.75","12P",23.5],["1","12P",24.1],["1.3","12P",25.7],["1.5","12P",26.4],["2.5","12P",30.7],["0.5","16P",23.1],["0.75","16P",25.6],["1","16P",26.4],["1.3","16P",27.9],["1.5","16P",28.9],["2.5","16P",34.8],["0.5","20P",25.3],["0.75","20P",27.9],["1","20P",29.0],["1.3","20P",30.7],["1.5","20P",32.3],["2.5","20P",38.3],["0.5","24P",27.3],["0.75","24P",30.5],["1","24P",32.2],["1.3","24P",34.7],["1.5","24P",35.7],["2.5","24P",42.0]],"CVV":[["0.5","2",7.0],["0.75","2",8.0],["1","2",8.0],["1.5","2",8.5],["2.5","2",10.0],["4","2",11.5],["6","2",14.0],["0.5","3",8.0],["0.75","3",8.0],["1","3",8.5],["1.5","3",9.0],["2.5","3",10.5],["4","3",12.5],["6","3",15.0],["0.5","4",8.5],["0.75","4",9.0],["1","4",9.5],["1.5","4",10.0],["2.5","4",11.5],["4","4",14.0],["6","4",16.5],["0.5","5",9.0],["0.75","5",9.5],["1","5",10.0],["1.5","5",11.0],["2.5","5",13.0],["4","5",15.0],["6","5",18.0],["0.5","6",9.5],["0.75","6",10.5],["1","6",11.0],["1.5","6",11.5],["2.5","6",14.0],["4","6",16.5],["6","6",19.5],["0.5","7",9.5],["0.75","7",10.5],["1","7",11.0],["1.5","7",11.5],["2.5","7",14.0],["4","7",16.5],["6","7",19.5],["0.5","8",10.5],["0.75","8",11.0],["1","8",11.5],["1.5","8",13.0],["2.5","8",15.0],["4","8",18.0],["6","8",21.0],["0.5","9",11.0],["0.75","9",12.0],["1","9",13.0],["1.5","9",14.0],["2.5","9",16.5],["4","9",19.0],["6","9",23.0],["0.5","10",12.0],["0.75","10",13.0],["1","10",14.0],["1.5","10",15.0],["2.5","10",17.5],["4","10",21.0],["6","10",25.5],["0.5","11",12.5],["0.75","11",13.5],["1","11",14.5],["1.5","11",15.5],["2.5","11",18.5],["4","11",21.5],["6","11",26.5],["0.5","12",12.5],["0.75","12",13.5],["1","12",14.5],["1.5","12",15.5],["2.5","12",18.5],["4","12",21.5],["6","12",26.5],["0.5","13",13.5],["0.75","13",14.0],["1","13",15.0],["1.5","13",16.0],["2.5","13",19.0],["4","13",22.5],["6","13",28.0],["0.5","14",13.5],["0.75","14",14.0],["1","14",15.0],["1.5","14",16.0],["2.5","14",19.0],["4","14",22.5],["6","14",28.0],["0.5","15",14.0],["0.75","15",15.0],["1","15",15.5],["1.5","15",17.0],["2.5","15",20.0],["4","15",24.5],["6","15",29.5],["0.5","16",14.0],["0.75","16",15.0],["1","16",15.5],["1.5","16",17.0],["2.5","16",20.0],["4","16",24.5],["6","16",29.5],["0.5","17",14.5],["0.75","17",15.5],["1","17",16.5],["1.5","17",18.0],["2.5","17",21.5],["4","17",26.0],["6","17",31.0],["0.5","18",14.5],["0.75","18",15.5],["1","18",16.5],["1.5","18",18.0],["2.5","18",21.5],["4","18",26.0],["6","18",31.0],["0.5","19",14.5],["0.75","19",15.5],["1","19",16.5],["1.5","19",18.0],["2.5","19",21.5],["4","19",26.0],["6","19",31.0],["0.5","20",15.5],["0.75","20",16.5],["1","20",17.5],["1.5","20",19.0],["2.5","20",22.5],["4","20",27.5],["6","20",32.5],["0.5","21",15.5],["0.75","21",16.5],["1","21",17.5],["1.5","21",19.0],["2.5","21",22.5],["4","21",27.5],["6","21",32.5],["0.5","22",16.0],["0.75","22",17.0],["1","22",18.0],["1.5","22",19.5],["2.5","22",24.5],["4","22",28.5],["6","22",34.5],["0.5","23",16.0],["0.75","23",17.0],["1","23",18.0],["1.5","23",19.5],["2.5","23",24.5],["4","23",28.5],["6","23",34.5],["0.5","24",17.0],["0.75","24",18.0],["1","24",19.0],["1.5","24",21.0],["2.5","24",26.0],["4","24",30.5],["6","24",37.5],["0.5","25",17.0],["0.75","25",18.5],["1","25",19.5],["1.5","25",21.5],["2.5","25",26.5],["4","25",31.0],["6","25",38.0],["0.5","26",17.0],["0.75","26",18.5],["1","26",19.5],["1.5","26",21.5],["2.5","26",26.5],["4","26",31.0],["6","26",38.0],["0.5","27",17.0],["0.75","27",18.5],["1","27",19.5],["1.5","27",21.5],["2.5","27",26.5],["4","27",31.0],["6","27",38.0],["0.5","28",18.0],["0.75","28",19.0],["1","28",20.0],["1.5","28",22.0],["2.5","28",27.5],["4","28",32.0],["6","28",39.5],["0.5","29",18.0],["0.75","29",19.0],["1","29",20.0],["1.5","29",22.0],["2.5","29",27.5],["4","29",32.0],["6","29",39.5],["0.5","30",18.0],["0.75","30",19.0],["1","30",20.0],["1.5","30",22.0],["2.5","30",27.5],["4","30",32.0],["6","30",39.5],["0.5","31",18.5],["0.75","31",20.0],["1","31",21.0],["1.5","31",23.5],["2.5","31",28.5],["4","31",33.5],["6","31",41.0],["0.5","32",18.5],["0.75","32",20.0],["1","32",21.0],["1.5","32",23.5],["2.5","32",28.5],["4","32",33.5],["6","32",41.0],["0.5","33",18.5],["0.75","33",20.0],["1","33",21.0],["1.5","33",23.5],["2.5","33",28.5],["4","33",33.5],["6","33",41.0],["0.5","34",19.0],["0.75","34",20.5],["1","34",22.0],["1.5","34",24.5],["2.5","34",29.5],["4","34",35.5],["6","34",42.5],["0.5","35",19.0],["0.75","35",20.5],["1","35",22.0],["1.5","35",24.5],["2.5","35",29.5],["4","35",35.5],["6","35",42.5],["0.5","36",19.0],["0.75","36",20.5],["1","36",22.0],["1.5","36",24.5],["2.5","36",29.5],["4","36",35.5],["6","36",42.5],["0.5","37",19.0],["0.75","37",20.5],["1","37",22.0],["1.5","37",24.5],["2.5","37",29.5],["4","37",35.5],["6","37",42.5],["0.5","38",20.0],["0.75","38",21.5],["1","38",22.5],["1.5","38",25.5],["2.5","38",30.5],["4","38",37.0],["6","38",44.5],["0.5","39",20.0],["0.75","39",21.5],["1","39",22.5],["1.5","39",25.5],["2.5","39",30.5],["4","39",37.0],["6","39",44.5],["0.5","40",20.0],["0.75","40",21.5],["1","40",22.5],["1.5","40",25.5],["2.5","40",30.5],["4","40",37.0],["6","40",44.5],["0.5","41",20.5],["0.75","41",22.0],["1","41",24.5],["1.5","41",26.5],["2.5","41",31.5],["4","41",38.5],["6","41",46.0],["0.5","42",20.5],["0.75","42",22.0],["1","42",24.5],["1.5","42",26.5],["2.5","42",31.5],["4","42",38.5],["6","42",46.0],["0.5","43",20.5],["0.75","43",22.0],["1","43",24.5],["1.5","43",26.5],["2.5","43",31.5],["4","43",38.5],["6","43",46.0],["0.5","44",21.5],["0.75","44",23.0],["1","44",25.5],["1.5","44",27.5],["2.5","44",33.0],["4","44",40.0],["6","44",49.0],["0.5","45",21.5],["0.75","45",23.5],["1","45",25.5],["1.5","45",28.0],["2.5","45",33.5],["4","45",40.5],["6","45",50.0],["0.5","46",21.5],["0.75","46",23.5],["1","46",25.5],["1.5","46",28.0],["2.5","46",33.5],["4","46",40.5],["6","46",50.0],["0.5","47",21.5],["0.75","47",23.5],["1","47",25.5],["1.5","47",28.0],["2.5","47",33.5],["4","47",40.5],["6","47",50.0],["0.5","48",21.5],["0.75","48",24.5],["1","48",25.5],["1.5","48",28.0],["2.5","48",33.5],["4","48",40.5],["6","48",50.0]],"VCT 1C":[["1","1",6.2],["1.5","1",6.6],["2.5","1",7.4],["4","1",8.6],["6","1",9.4],["10","1",12.0],["16","1",13.5],["25","1",16.0],["35","1",17.5]],"VCT":[["1","2",9.6],["1.5","2",11.0],["2.5","2",12.5],["4","2",14.5],["6","2",16.0],["10","2",20.0],["16","2",23.0],["25","2",27.5],["35","2",31.0],["1","3",10.5],["1.5","3",11.5],["2.5","3",13.0],["4","3",15.5],["6","3",17.5],["10","3",21.5],["16","3",25.0],["25","3",30.0],["35","3",33.5],["1","4",12.0],["1.5","4",12.5],["2.5","4",15.0],["4","4",17.0],["6","4",19.5],["10","4",24.0],["16","4",28.0],["25","4",33.0],["35","4",37.0]],"THW":[["1.5","1",3.3],["2.5","1",4.0],["4","1",4.6],["6","1",5.2],["10","1",6.7],["16","1",7.8],["25","1",9.7],["35","1",10.9],["50","1",12.8],["70","1",14.6],["95","1",17.1],["120","1",18.8],["150","1",20.9],["185","1",23.3],["240","1",26.6],["300","1",29.6],["400","1",33.2]],"PV Solar 1C":[["2.5","1",5.35],["4","1",5.7],["6","1",6.6],["10","1",7.5]],"Audio 92xx":[["9222","1P",5.6],["9220","1P",5.9],["9218","1P",6.4],["9216","1P",8.5],["9214","1P",9.3],["9212","1P",11.0],["9218-D","1P",8.8],["9216-D","1P",10.9]],"LiYCY":[["0.14","2",3.9],["0.14","3",4.1],["0.14","4",4.3],["0.14","5",4.6],["0.14","6",4.9],["0.14","7",4.9],["0.14","8",5.8],["0.14","10",6.1],["0.14","12",6.3],["0.14","14",6.7],["0.14","15",6.9],["0.14","16",7.0],["0.14","18",7.3],["0.14","20",7.7],["0.14","21",7.9],["0.14","24",8.3],["0.14","25",8.5],["0.14","28",8.5],["0.14","30",8.7],["0.14","36",9.3],["0.14","40",10.4],["0.14","44",10.7],["0.14","50",11.1],["0.25","2",4.5],["0.25","3",4.7],["0.25","4",5.0],["0.25","5",5.6],["0.25","6",6.0],["0.25","7",6.0],["0.25","8",7.1],["0.25","10",7.5],["0.25","12",7.7],["0.25","14",8.0],["0.25","15",8.3],["0.25","16",8.4],["0.25","18",8.8],["0.25","20",9.3],["0.25","21",9.6],["0.25","25",10.7],["0.25","28",10.8],["0.25","32",11.4],["0.25","36",11.8],["0.25","40",12.7],["0.25","50",13.8],["0.25","61",15.0],["0.34","2",4.9],["0.34","3",5.1],["0.34","4",5.7],["0.34","5",6.2],["0.34","6",6.8],["0.34","7",6.8],["0.34","8",7.8],["0.34","10",8.3],["0.34","12",8.5],["0.34","14",8.9],["0.34","15",9.2],["0.34","16",9.4],["0.34","18",10.2],["0.34","20",10.7],["0.34","21",11.1],["0.34","25",11.9],["0.34","28",12.0],["0.34","30",12.3],["0.34","32",13.0],["0.34","36",13.4],["0.34","40",14.8],["0.34","50",15.9],["0.5","2",5.6],["0.5","3",5.9],["0.5","4",6.3],["0.5","5",7.0],["0.5","6",7.6],["0.5","7",7.6],["0.5","8",8.7],["0.5","10",9.3],["0.5","12",9.6],["0.5","18",11.8],["0.5","20",12.1],["0.5","25",13.7],["0.5","30",14.5],["0.75","2",6.0],["0.75","3",6.3],["0.75","4",7.0],["0.75","5",7.6],["0.75","7",8.2],["0.75","10",10.5],["0.75","12",10.8],["0.75","18",13.0],["0.75","25",15.3],["0.75","30",15.8],["1","2",6.3],["1","3",6.8],["1","4",7.3],["1","5",8.0],["1","7",8.6],["1","10",11.1],["1","12",11.4],["1","18",13.4],["1","25",16.2],["1.5","2",7.1],["1.5","3",7.5],["1.5","4",8.1],["1.5","5",8.8],["1.5","7",9.5],["1.5","12",12.7],["1.5","18",15.3],["1.5","25",17.9]]};
 const $=id=>document.getElementById(id);
 const fmt=(n,d=1)=>isFinite(n)?Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
 const CB=[6,10,16,20,25,32,40,50,63,80,100,125,160,200,250,320,400,500,630,800,1000,1250];
 const nextCB=x=>CB.find(c=>c>=x)||('>'+CB[CB.length-1]);
+// มอก.770-2531 / มอก.216 : [inch, mm, EMT, IMC, RSC, PVC] (mm²)
+const CONDUIT_TH=[['1/2"',15,195,230,201,133],['3/4"',20,343,390,355,227],['1"',25,555,637,572,380],['1-1/4"',32,967,1091,986,661],['1-1/2"',40,1313,1467,1338,962],['2"',50,2164,2382,2196,1735],['2-1/2"',65,3776,3367,3137,2827],['3"',80,5706,5175,4837,4418],['3-1/2"',90,7447,6907,6458,5945],['4"',100,9520,8871,8309,7543],['5"',125,null,null,13041,11882],['6"',150,null,null,18786,16972]];
+// HDPE Class-I/PN6 DIN 8074/75 : [OD, area mm²]
+const HDPE=[[20,211],[25,360],[32,625],[40,1029],[50,1619],[63,2570],[75,3632],[90,5255],[110,7854],[125,10136],[140,12708],[160,16604],[180,21021],[200,25958]];
+const CONDNAME=['EMT','IMC','RSC','PVC','HDPE'];
+const WIREWAY=[['50×50',50,50],['75×75',75,75],['100×100',100,100],['150×150',150,150],['200×200',200,200],['100×50',100,50],['150×100',150,100],['200×100',200,100],['300×100',300,100],['กำหนดเอง…',0,0]];
 
-// Tabs
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
-  document.querySelectorAll('.card').forEach(x=>x.classList.remove('on'));
-  t.classList.add('on'); $('card-'+t.dataset.t).classList.add('on');
-});
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.card').forEach(x=>x.classList.remove('on'));t.classList.add('on');$('card-'+t.dataset.t).classList.add('on');});
 
-// CB mode toggle
-document.querySelectorAll('#cb-mode button').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('#cb-mode button').forEach(x=>x.classList.remove('on'));
-  b.classList.add('on');
-  const kw=b.dataset.m==='kw';
-  $('cb-load-kw').style.display=kw?'':'none';
-  $('cb-load-a').style.display=kw?'none':'';
-  calcCB();
-});
+document.querySelectorAll('#cb-mode button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#cb-mode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');const kw=b.dataset.m==='kw';$('cb-load-kw').style.display=kw?'':'none';$('cb-load-a').style.display=kw?'none':'';calcCB();});
+function calcCB(){const sys=+$('cb_sys').value,v=+$('cb_v').value,pf=+$('cb_pf').value;const kwMode=$('cb-mode').querySelector('.on').dataset.m==='kw';let ib;if(kwMode){const p=+$('cb_kw').value*1000;ib=sys==3?p/(Math.sqrt(3)*v*pf):p/(v*pf);}else ib=+$('cb_a').value;const k=(+$('cb_ca').value)*(+$('cb_cg').value)*(+$('cb_ci').value);const inCB=nextCB(ib);const it=(typeof inCB==='number'?inCB:CB[CB.length-1])/k;$('cb_out').innerHTML=inCB+'<small>A</small>';$('cb_ib').innerHTML=fmt(ib,1)+' <small>A</small>';$('cb_k').innerHTML=fmt(k,3);$('cb_it').innerHTML=fmt(it,1)+' <small>A</small>';}
+function calcVD(){const v=+$('vd_v').value,i=+$('vd_i').value,l=+$('vd_l').value,mv=+$('vd_mv').value;const vd=mv*i*l/1000;const pct=v>0?vd/v*100:0;$('vd_pct').innerHTML=fmt(pct,2)+'<small>%</small>';$('vd_volt').innerHTML=fmt(vd,1)+' <small>V</small>';$('vd_end').innerHTML=fmt(v-vd,1)+' <small>V</small>';const ok=pct<=5;$('vd_chip').className='chip '+(ok?'pass':'fail');$('vd_ct').textContent=ok?'ผ่านเกณฑ์ ≤ 5%':'เกิน 5% — เพิ่มขนาดสาย';}
+function calcMtr(){const p=+$('m_kw').value*1000,v=+$('m_v').value,pf=+$('m_pf').value,eff=+$('m_eff').value/100,mult=+$('m_start').value;const flc=p/(Math.sqrt(3)*v*pf*eff);$('m_flc').innerHTML=fmt(flc,1)+'<small>A</small>';$('m_start_i').innerHTML=fmt(flc*mult,0)+' <small>A</small>';$('m_cb').innerHTML=fmt(flc*1.25,1)+' <small>A</small>';}
+function calcGnd(){const rho=+$('g_rho').value,L=+$('g_l').value,d=+$('g_d').value/1000,n=+$('g_n').value||1,F=+$('g_f').value||1;const R=(rho/(2*Math.PI*L))*(Math.log(8*L/d)-1);const Rt=R/(n*F);$('g_out').innerHTML=fmt(Rt,2)+'<small>Ω</small>';$('g_single').innerHTML=fmt(R,2)+' <small>Ω</small>';const ok=Rt<=5;$('g_chip').className='chip '+(ok?'pass':'fail');$('g_ct').textContent=ok?'ผ่านเกณฑ์ ≤ 5 Ω':'เกิน 5 Ω — เพิ่มแท่ง/ปรับปรุงดิน';}
 
-function calcCB(){
-  const sys=+$('cb_sys').value, v=+$('cb_v').value, pf=+$('cb_pf').value;
-  const kwMode=$('cb-mode').querySelector('.on').dataset.m==='kw';
-  let ib;
-  if(kwMode){const p=+$('cb_kw').value*1000; ib=sys==3? p/(Math.sqrt(3)*v*pf) : p/(v*pf);}
-  else ib=+$('cb_a').value;
-  const k=(+$('cb_ca').value)*(+$('cb_cg').value)*(+$('cb_ci').value);
-  const inCB=nextCB(ib);
-  const it=(typeof inCB==='number'?inCB:CB[CB.length-1])/k;
-  $('cb_out').innerHTML=(typeof inCB==='number'?inCB:inCB)+'<small>A</small>';
-  $('cb_ib').innerHTML=fmt(ib,1)+' <small>A</small>';
-  $('cb_k').innerHTML=fmt(k,3);
-  $('cb_it').innerHTML=fmt(it,1)+' <small>A</small>';
-}
+// ===== cable list engine =====
+const ROWS={cf:[{od:9.7,q:3}],ww:[{od:12.6,q:6}],ct:[{sz:25,od:29.5,q:6}]};
+const AREA=od=>Math.PI/4*od*od;
+const totArea=k=>ROWS[k].reduce((s,r)=>s+r.q*AREA(r.od),0);
+const totQty=k=>ROWS[k].reduce((s,r)=>s+(+r.q||0),0);
+const totOD=k=>ROWS[k].reduce((s,r)=>s+r.q*r.od,0);
+function renderRows(k){const box=$(k+'_rows');box.innerHTML='';
+  ROWS[k].forEach((r,i)=>{const d=document.createElement('div');
+    if(k==='ct'){d.className='cablerow three';
+      d.innerHTML='<input type="number" inputmode="decimal" value="'+r.sz+'" data-k="ct" data-i="'+i+'" data-f="sz"><input type="number" inputmode="decimal" step="0.1" value="'+r.od+'" data-k="ct" data-i="'+i+'" data-f="od"><input type="number" inputmode="numeric" value="'+r.q+'" data-k="ct" data-i="'+i+'" data-f="q"><button class="del" data-del="ct" data-i="'+i+'">×</button>';}
+    else{d.className='cablerow';
+      d.innerHTML='<input type="number" inputmode="decimal" step="0.1" value="'+r.od+'" data-k="'+k+'" data-i="'+i+'" data-f="od"><input type="number" inputmode="numeric" value="'+r.q+'" data-k="'+k+'" data-i="'+i+'" data-f="q"><button class="del" data-del="'+k+'" data-i="'+i+'">×</button>';}
+    box.appendChild(d);});
+  box.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{const{k,i,f}=e.target.dataset;ROWS[k][i][f]=+e.target.value;CALC[k]();sub(k);}));
+  box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const k=b.dataset.del;if(ROWS[k].length>1)ROWS[k].splice(+b.dataset.i,1);renderRows(k);CALC[k]();});
+  sub(k);}
+const sub=k=>$(k+'_sub').textContent='รวม '+fmt(totArea(k),0)+' mm²';
+document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{const k=b.dataset.add;const sel=$(k+'_psize');const opt=sel.options[sel.selectedIndex];const od=+sel.value||10;if(k==='ct'){const sz=opt?(+opt.dataset.size||0):0;ROWS.ct.push({sz:sz,od:od,q:1});}else{ROWS[k].push({od:od,q:1});}renderRows(k);CALC[k]();});
 
-function calcVD(){
-  const sys=+$('vd_sys').value,v=+$('vd_v').value,i=+$('vd_i').value,l=+$('vd_l').value,mv=+$('vd_mv').value;
-  const vd=mv*i*l/1000;
-  const pct=v>0?vd/v*100:0;
-  $('vd_pct').innerHTML=fmt(pct,2)+'<small>%</small>';
-  $('vd_volt').innerHTML=fmt(vd,1)+' <small>V</small>';
-  $('vd_end').innerHTML=fmt(v-vd,1)+' <small>V</small>';
-  const ok=pct<=5;
-  const c=$('vd_chip'); c.className='chip '+(ok?'pass':'fail');
-  $('vd_ct').textContent=ok?'ผ่านเกณฑ์ ≤ 5%':'เกิน 5% — ต้องเพิ่มขนาดสาย';
-}
+// cable type→size picker
+function buildPicker(k){const t=$(k+'_ptype');Object.keys(CABLE_DB).forEach(tp=>{const o=document.createElement('option');o.value=tp;o.textContent=tp;t.appendChild(o);});t.value='THW';fillSizes(k);t.addEventListener('change',()=>fillSizes(k));}
+function fillSizes(k){const tp=$(k+'_ptype').value,s=$(k+'_psize');s.innerHTML='';CABLE_DB[tp].forEach(r=>{const o=document.createElement('option');o.value=r[2];o.dataset.size=r[0];const core=r[1]&&r[1]!=='1'?' ×'+r[1]:'';o.textContent=r[0]+(tp==='Audio 92xx'?'':' mm²')+core+' → '+r[2]+'mm';s.appendChild(o);});}
 
-function calcMtr(){
-  const p=+$('m_kw').value*1000,v=+$('m_v').value,pf=+$('m_pf').value,eff=+$('m_eff').value/100,mult=+$('m_start').value;
-  const flc=p/(Math.sqrt(3)*v*pf*eff);
-  $('m_flc').innerHTML=fmt(flc,1)+'<small>A</small>';
-  $('m_start_i').innerHTML=fmt(flc*mult,0)+' <small>A</small>';
-  $('m_cb').innerHTML=nextCB(flc*1.25)+' <small>A</small>';
-}
+// ===== conduit fill (วสท.2564) =====
+function recMetal(col,minA){for(const r of CONDUIT_TH){const a=r[2+col];if(a!=null&&a>=minA)return r[0]+' ('+r[1]+'mm)';}return 'เกิน 6"';}
+function recHDPE(minA){for(const r of HDPE){if(r[1]>=minA)return 'OD '+r[0]+'mm';}return '>200mm';}
+function calcCF(){const used=totArea('cf');const n=totQty('cf');const ff=n<=1?53:(n===2?31:40);const rsv=+$('cf_rsv').value;const minA=used/(ff/100)/(1-rsv);
+  $('cf_used').innerHTML=fmt(used,0)+' <small>mm²</small>';
+  $('cf_ff').innerHTML=n+' เส้น → <small>'+ff+'%</small>';
+  $('cf_min').innerHTML=fmt(minA,0)+' <small>mm²</small>';
+  const recs=[recMetal(0,minA),recMetal(1,minA),recMetal(2,minA),recMetal(3,minA),recHDPE(minA)];
+  for(let i=0;i<5;i++)$('cf_r'+i).textContent=recs[i];
+  const ti=+$('cf_type').value;$('cf_tname').textContent=CONDNAME[ti];$('cf_main').textContent=recs[ti];}
 
-function calcGnd(){
-  const rho=+$('g_rho').value,L=+$('g_l').value,d=+$('g_d').value/1000,n=+$('g_n').value||1,F=+$('g_f').value||1;
-  const R=(rho/(2*Math.PI*L))*(Math.log(8*L/d)-1);
-  const Rt=R/(n*F);
-  $('g_out').innerHTML=fmt(Rt,2)+'<small>Ω</small>';
-  $('g_single').innerHTML=fmt(R,2)+' <small>Ω</small>';
-  const ok=Rt<=5;
-  const c=$('g_chip'); c.className='chip '+(ok?'pass':'fail');
-  $('g_ct').textContent=ok?'ผ่านเกณฑ์ ≤ 5 Ω':'เกิน 5 Ω — เพิ่มแท่ง/ปรับปรุงดิน';
-}
+// ===== wireway =====
+function fillWW(){const s=$('ww_size');WIREWAY.forEach((w,i)=>{const o=document.createElement('option');o.value=i;o.textContent=w[0]+(w[1]?' mm':'');s.appendChild(o);});s.value=2;}
+function wwDims(){const i=+$('ww_size').value,w=WIREWAY[i];if(w[1]===0){$('ww-wbox').style.display='';$('ww-hbox').style.display='';return[+$('ww_w').value,+$('ww_h').value];}$('ww-wbox').style.display='none';$('ww-hbox').style.display='none';return[w[1],w[2]];}
+function calcWW(){const[w,h]=wwDims();const area=w*h;const use=area*0.20;const used=totArea('ww');const n=totQty('ww');const pct=area>0?used/area*100:0;$('ww_pct').innerHTML=fmt(pct,1)+'<small>%</small>';$('ww_area').innerHTML=fmt(area,0)+' <small>mm²</small>';$('ww_use').innerHTML=fmt(use,0)+' <small>mm²</small>';$('ww_used').innerHTML=fmt(used,0)+' <small>mm²</small>';$('ww_n').innerHTML=n+(n>30?' <small>⚠ derate</small>':'');const ok=pct<=20;$('ww_chip').className='chip '+(ok?'pass':'fail');$('ww_ct').textContent=ok?'ผ่าน ≤ 20%':'เกิน 20% — เพิ่มขนาดราง';}
 
-// bind all inputs
+// ===== tray/ladder — วสท. 5.15.4 + ตาราง 5-7 =====
+// [width, ladder<95, ladderX, solid<95, solidX]  (mm / mm²)
+const T57=[[150,1500,3500,1050,2450],[200,2500,5500,1750,4000],[300,4000,8500,2800,5950],[400,5500,11000,3850,7875],[450,7000,14000,4900,9800],[500,8500,16000,5950,11900],[600,10000,18000,7000,14000],[750,14000,24000,9800,16800],[800,16000,27000,11200,18900],[900,18000,30000,12600,21000],[1000,22000,36000,15400,25200]];
+function calcCT(){
+  const type=$('ct_type').value;const solid=(type==='solid');
+  const c1=solid?3:1,cX=solid?4:2;
+  let sod=0,sarea=0,big=false,small=false;
+  ROWS.ct.forEach(r=>{const sz=+r.sz||0;const a=Math.PI/4*r.od*r.od;
+    if(sz>=95){sod+=r.q*r.od;big=true;}else{sarea+=r.q*a;small=true;}});
+  $('ct_sod').innerHTML=fmt(sod,0)+' <small>mm</small>';
+  $('ct_sarea').innerHTML=fmt(sarea,0)+' <small>mm²</small>';
+  let ccase='—',rec=null,tbl='—';
+  if(big&&!small){ccase='1 — ≥95 ชั้นเดียว';for(const r of T57){if(r[0]>=sod){rec=r[0];break;}}tbl='Σd ≤ กว้างราง';}
+  else if(small&&!big){ccase='2 — <95 (พท.)';for(const r of T57){if(r[c1]>=sarea){rec=r[0];tbl=fmt(r[c1],0)+' mm²';break;}}}
+  else if(big&&small){ccase='3 — ผสม';for(const r of T57){if(r[cX]-30.5*sod>=sarea){rec=r[0];tbl=fmt(r[cX]-30.5*sod,0)+' mm²';break;}}}
+  else{ccase='— (ยังไม่มีข้อมูล)';}
+  $('ct_case').textContent=ccase;$('ct_tbl').innerHTML=tbl;
+  const ok=rec!=null;$('ct_main').textContent=ok?(rec+' mm'):'เกิน 1000 mm';
+  $('ct_chip').className='chip '+(ok?'pass':'fail');
+  $('ct_ct').textContent=ok?('ราง '+rec+' mm พอ ('+(solid?'Solid':'Ladder/Vent')+')'):'เกินตาราง 5-7 — แบ่งราง/ราง special';}
+
+const CALC={cf:calcCF,ww:calcWW,ct:calcCT};
 document.querySelectorAll('#card-cb input,#card-cb select').forEach(e=>e.addEventListener('input',calcCB));
 document.querySelectorAll('#card-vd input,#card-vd select').forEach(e=>e.addEventListener('input',calcVD));
 document.querySelectorAll('#card-mtr input,#card-mtr select').forEach(e=>e.addEventListener('input',calcMtr));
 document.querySelectorAll('#card-gnd input,#card-gnd select').forEach(e=>e.addEventListener('input',calcGnd));
-calcCB();calcVD();calcMtr();calcGnd();
+$('cf_type').addEventListener('change',calcCF);$('cf_rsv').addEventListener('change',calcCF);
+$('ww_size').addEventListener('change',()=>{wwDims();calcWW();});$('ww_w').addEventListener('input',calcWW);$('ww_h').addEventListener('input',calcWW);
+document.querySelectorAll('#card-ct select').forEach(e=>e.addEventListener('input',calcCT));
 
-// register service worker (works when hosted over https)
+buildPicker('cf');buildPicker('ww');buildPicker('ct');fillWW();
+renderRows('cf');renderRows('ww');renderRows('ct');
+calcCB();calcVD();calcMtr();calcGnd();calcCF();calcWW();calcCT();
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>
 </body>
