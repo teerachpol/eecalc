@@ -167,7 +167,7 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:20px 16px 30px;
         <div class="field"><label>เผื่อพื้นที่สำรอง</label><select id="cf_rsv"><option value="0">ไม่เผื่อ (ตาม FF)</option><option value="0.2">เผื่อ 20%</option></select></div>
       </div>
       <div class="cablehdr"><span class="t">รายการสายในท่อ</span><span class="sub" id="cf_sub">รวม 0 mm²</span></div>
-      <div class="rowcap"><span>OD ทั้งเส้น (mm)</span><span>จำนวน</span><span></span></div>
+      <div class="rowcap3"><span>ขนาด(ตร.มม.)</span><span>OD (mm)</span><span>จำนวน</span><span></span></div>
       <div id="cf_rows"></div>
       <div class="picker"><select id="cf_ptype"></select><select id="cf_psize"></select><button data-add="cf">+ เพิ่ม</button></div>
       <div class="readout"><div class="rlabel">ขนาดท่อขั้นต่ำ (<span id="cf_tname">EMT</span>)</div><div class="rmain" id="cf_main">—</div>
@@ -192,7 +192,7 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:20px 16px 30px;
         <div class="field" id="ww-hbox" style="display:none"><label>สูง H</label><div class="u" data-u="mm"><input id="ww_h" type="number" inputmode="decimal" value="100"></div></div>
       </div>
       <div class="cablehdr"><span class="t">รายการสายในราง</span><span class="sub" id="ww_sub">รวม 0 mm²</span></div>
-      <div class="rowcap"><span>OD สาย (mm)</span><span>จำนวน</span><span></span></div>
+      <div class="rowcap3"><span>ขนาด(ตร.มม.)</span><span>OD (mm)</span><span>จำนวน</span><span></span></div>
       <div id="ww_rows"></div>
       <div class="picker"><select id="ww_ptype"></select><select id="ww_psize"></select><button data-add="ww">+ เพิ่ม</button></div>
       <div class="readout"><div class="rlabel">% การใช้พื้นที่ราง</div><div class="rmain" id="ww_pct">—<small>%</small></div>
@@ -226,7 +226,7 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:20px 16px 30px;
         <div class="note">วสท. 5.15.4: สาย ≥95 ตร.มม. วางชั้นเดียว Σd ≤ กว้างราง (5.15.4.1.1) • สาย &lt;95 ใช้ Σพท. ≤ ตาราง 5-7 (5.15.4.1.2) • ผสม X−30.5·Σd ≥ Σพท. (5.15.4.1.3). Ventilated ใช้เกณฑ์เดียวกับ Ladder</div></div>
     </section>
   </main>
-  <footer>E&amp;I Calc · v2.2 — อ้างอิง วสท.2564 / มอก. / IEC — เครื่องมือช่วยประเมิน ตรวจสอบกับวิศวกรผู้รับผิดชอบก่อนใช้จริง</footer>
+  <footer>E&amp;I Calc · v2.3 — อ้างอิง วสท.2564 / มอก. / IEC — เครื่องมือช่วยประเมิน ตรวจสอบกับวิศวกรผู้รับผิดชอบก่อนใช้จริง</footer>
 </div>
 
 <script>
@@ -251,23 +251,20 @@ function calcMtr(){const p=+$('m_kw').value*1000,v=+$('m_v').value,pf=+$('m_pf')
 function calcGnd(){const rho=+$('g_rho').value,L=+$('g_l').value,d=+$('g_d').value/1000,n=+$('g_n').value||1,F=+$('g_f').value||1;const R=(rho/(2*Math.PI*L))*(Math.log(8*L/d)-1);const Rt=R/(n*F);$('g_out').innerHTML=fmt(Rt,2)+'<small>Ω</small>';$('g_single').innerHTML=fmt(R,2)+' <small>Ω</small>';const ok=Rt<=5;$('g_chip').className='chip '+(ok?'pass':'fail');$('g_ct').textContent=ok?'ผ่านเกณฑ์ ≤ 5 Ω':'เกิน 5 Ω — เพิ่มแท่ง/ปรับปรุงดิน';}
 
 // ===== cable list engine =====
-const ROWS={cf:[{od:9.7,q:3}],ww:[{od:12.6,q:6}],ct:[{sz:25,od:29.5,q:6}]};
+const ROWS={cf:[{sz:25,od:9.7,q:3}],ww:[{sz:16,od:7.8,q:6}],ct:[{sz:25,od:29.5,q:6}]};
 const AREA=od=>Math.PI/4*od*od;
 const totArea=k=>ROWS[k].reduce((s,r)=>s+r.q*AREA(r.od),0);
 const totQty=k=>ROWS[k].reduce((s,r)=>s+(+r.q||0),0);
 const totOD=k=>ROWS[k].reduce((s,r)=>s+r.q*r.od,0);
 function renderRows(k){const box=$(k+'_rows');box.innerHTML='';
-  ROWS[k].forEach((r,i)=>{const d=document.createElement('div');
-    if(k==='ct'){d.className='cablerow three';
-      d.innerHTML='<input type="number" inputmode="decimal" value="'+r.sz+'" data-k="ct" data-i="'+i+'" data-f="sz"><input type="number" inputmode="decimal" step="0.1" value="'+r.od+'" data-k="ct" data-i="'+i+'" data-f="od"><input type="number" inputmode="numeric" value="'+r.q+'" data-k="ct" data-i="'+i+'" data-f="q"><button class="del" data-del="ct" data-i="'+i+'">×</button>';}
-    else{d.className='cablerow';
-      d.innerHTML='<input type="number" inputmode="decimal" step="0.1" value="'+r.od+'" data-k="'+k+'" data-i="'+i+'" data-f="od"><input type="number" inputmode="numeric" value="'+r.q+'" data-k="'+k+'" data-i="'+i+'" data-f="q"><button class="del" data-del="'+k+'" data-i="'+i+'">×</button>';}
+  ROWS[k].forEach((r,i)=>{const d=document.createElement('div');d.className='cablerow three';
+    d.innerHTML='<input type="number" inputmode="decimal" value="'+(r.sz!=null?r.sz:'')+'" data-k="'+k+'" data-i="'+i+'" data-f="sz"><input type="number" inputmode="decimal" step="0.1" value="'+r.od+'" data-k="'+k+'" data-i="'+i+'" data-f="od"><input type="number" inputmode="numeric" value="'+r.q+'" data-k="'+k+'" data-i="'+i+'" data-f="q"><button class="del" data-del="'+k+'" data-i="'+i+'">×</button>';
     box.appendChild(d);});
   box.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{const{k,i,f}=e.target.dataset;ROWS[k][i][f]=+e.target.value;CALC[k]();sub(k);}));
   box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const k=b.dataset.del;if(ROWS[k].length>1)ROWS[k].splice(+b.dataset.i,1);renderRows(k);CALC[k]();});
   sub(k);}
 const sub=k=>$(k+'_sub').textContent='รวม '+fmt(totArea(k),0)+' mm²';
-document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{const k=b.dataset.add;const sel=$(k+'_psize');const opt=sel.options[sel.selectedIndex];const od=+sel.value||10;if(k==='ct'){const sz=opt?(+opt.dataset.size||0):0;ROWS.ct.push({sz:sz,od:od,q:1});}else{ROWS[k].push({od:od,q:1});}renderRows(k);CALC[k]();});
+document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{const k=b.dataset.add;const sel=$(k+'_psize');const opt=sel.options[sel.selectedIndex];const od=+sel.value||10;const sz=opt?(+opt.dataset.size||0):0;ROWS[k].push({sz:sz,od:od,q:1});renderRows(k);CALC[k]();});
 
 // cable type→size picker
 function buildPicker(k){const t=$(k+'_ptype');Object.keys(CABLE_DB).forEach(tp=>{const o=document.createElement('option');o.value=tp;o.textContent=tp;t.appendChild(o);});t.value='THW';fillSizes(k);t.addEventListener('change',()=>fillSizes(k));}
