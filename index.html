@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<title>E&I Calc — เครื่องคำนวณงานระบบไฟฟ้า</title>
+
+<!-- PWA / iOS -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="E&I Calc">
+<meta name="theme-color" content="#13171A">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+
+<style>
+:root{
+  --bg:#13171A; --panel:#1B2125; --well:#222A2F; --line:#303A40;
+  --ink:#EAEFF1; --dim:#889199; --amber:#FFB020; --amber-dim:#C98A2E;
+  --fault:#FF5D5D; --ok:#46C98B;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  -webkit-font-smoothing:antialiased; line-height:1.4;
+  padding-bottom:var(--safe-bot);
+  overscroll-behavior-y:none;
+}
+.app{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+
+/* Header */
+header{
+  padding:calc(var(--safe-top) + 16px) 20px 14px;
+  border-bottom:1px solid var(--line);
+  position:sticky;top:0;background:linear-gradient(var(--bg),rgba(19,23,26,.92));
+  backdrop-filter:blur(8px);z-index:20;
+}
+.brand{display:flex;align-items:center;gap:11px}
+.mark{
+  width:34px;height:34px;border-radius:9px;background:var(--panel);
+  border:1px solid var(--line);display:grid;place-items:center;flex:0 0 auto;
+  box-shadow:inset 0 0 0 1px rgba(255,176,32,.06);
+}
+.mark svg{width:19px;height:19px;filter:drop-shadow(0 0 5px rgba(255,176,32,.5))}
+.brand h1{font-size:16px;margin:0;font-weight:650;letter-spacing:.2px}
+.brand .sub{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-top:1px}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;padding:12px 14px 4px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  flex:0 0 auto;padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;
+  background:var(--panel);border:1px solid var(--line);color:var(--dim);
+  cursor:pointer;transition:.15s;white-space:nowrap;
+}
+.tab.on{background:rgba(255,176,32,.12);border-color:var(--amber);color:var(--amber)}
+
+/* Panels */
+main{flex:1;padding:8px 14px 40px}
+.card{display:none;animation:fade .25s ease}
+.card.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--amber-dim);font-weight:700;margin:14px 2px 10px}
+
+/* Inputs */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid .full{grid-column:1/-1}
+.field label{display:block;font-size:12px;color:var(--dim);margin:0 0 5px 2px;font-weight:600}
+.field input,.field select{
+  width:100%;padding:12px 12px;border-radius:11px;font-size:16px;font-weight:600;
+  background:var(--well);border:1px solid var(--line);color:var(--ink);
+  font-family:inherit;appearance:none;-webkit-appearance:none;
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--amber);background:#262F35}
+.field .u{position:relative}
+.field .u::after{content:attr(data-u);position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  color:var(--dim);font-size:13px;font-weight:600;pointer-events:none}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23889199' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;padding-right:32px}
+
+/* Readout */
+.readout{
+  margin-top:18px;background:#0E1315;border:1px solid var(--line);border-radius:16px;
+  padding:18px 18px 16px;position:relative;overflow:hidden;
+}
+.readout::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.012) 3px 4px)}
+.readout .rlabel{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);font-weight:700}
+.readout .rmain{
+  font-family:ui-monospace,"SF Mono","JetBrains Mono",Menlo,monospace;
+  font-size:44px;font-weight:700;color:var(--amber);letter-spacing:1px;line-height:1.05;margin:6px 0 2px;
+  text-shadow:0 0 16px rgba(255,176,32,.35);font-variant-numeric:tabular-nums;
+}
+.readout .rmain small{font-size:19px;color:var(--amber-dim);margin-left:5px;text-shadow:none}
+.rrows{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;display:grid;gap:9px}
+.rrow{display:flex;justify-content:space-between;align-items:baseline;font-size:14px}
+.rrow .k{color:var(--dim)}
+.rrow .v{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-weight:650;color:var(--ink);font-variant-numeric:tabular-nums}
+.rrow .v small{color:var(--dim);font-weight:500;margin-left:3px}
+
+/* status chip */
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;
+  font-size:12px;font-weight:700;margin-top:14px}
+.chip.pass{background:rgba(70,201,139,.14);color:var(--ok);border:1px solid rgba(70,201,139,.4)}
+.chip.fail{background:rgba(255,93,93,.14);color:var(--fault);border:1px solid rgba(255,93,93,.4)}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor}
+.note{font-size:12px;color:var(--dim);margin-top:12px;line-height:1.55}
+.seg{display:flex;background:var(--well);border:1px solid var(--line);border-radius:11px;padding:3px;gap:3px}
+.seg button{flex:1;padding:9px;border:none;background:transparent;color:var(--dim);
+  font-family:inherit;font-size:14px;font-weight:600;border-radius:8px;cursor:pointer}
+.seg button.on{background:rgba(255,176,32,.15);color:var(--amber)}
+footer{text-align:center;color:var(--dim);font-size:11px;padding:20px 16px 30px;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="mark">
+        <svg viewBox="0 0 24 24" fill="#FFB020"><path d="M13 2 4 14h6l-1.5 8L20 9h-6z"/></svg>
+      </div>
+      <div>
+        <h1>E&amp;I Calc</h1>
+        <div class="sub">วสท. / IEC Field Tool</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs" id="tabs">
+    <button class="tab on" data-t="cb">สาย &amp; CB</button>
+    <button class="tab" data-t="vd">แรงดันตก</button>
+    <button class="tab" data-t="mtr">มอเตอร์</button>
+    <button class="tab" data-t="gnd">กราวด์</button>
+  </div>
+
+  <main>
+    <!-- ============ CB / CABLE ============ -->
+    <section class="card on" id="card-cb">
+      <div class="eyebrow">เลือกขนาด CB &amp; สายไฟ</div>
+      <div class="seg full" id="cb-mode">
+        <button class="on" data-m="kw">ป้อนโหลด (kW)</button>
+        <button data-m="a">ป้อนกระแส (A)</button>
+      </div>
+      <div class="grid" style="margin-top:10px">
+        <div class="field" id="cb-load-kw"><label>โหลด P</label><div class="u" data-u="kW"><input id="cb_kw" type="number" inputmode="decimal" value="15"></div></div>
+        <div class="field" id="cb-load-a" style="display:none"><label>กระแส I_B</label><div class="u" data-u="A"><input id="cb_a" type="number" inputmode="decimal" value="25"></div></div>
+        <div class="field"><label>ระบบ</label><select id="cb_sys"><option value="3">3 เฟส</option><option value="1">1 เฟส</option></select></div>
+        <div class="field"><label>แรงดัน V</label><div class="u" data-u="V"><input id="cb_v" type="number" inputmode="decimal" value="400"></div></div>
+        <div class="field"><label>Power Factor</label><input id="cb_pf" type="number" inputmode="decimal" value="0.85" step="0.01"></div>
+        <div class="field"><label>Ca (อุณหภูมิ)</label><input id="cb_ca" type="number" inputmode="decimal" value="0.94" step="0.01"></div>
+        <div class="field"><label>Cg (กลุ่มสาย)</label><input id="cb_cg" type="number" inputmode="decimal" value="0.80" step="0.01"></div>
+        <div class="field full"><label>Ci (ฉนวน/ท่อ)</label><input id="cb_ci" type="number" inputmode="decimal" value="1.00" step="0.01"></div>
+      </div>
+      <div class="readout">
+        <div class="rlabel">CB ที่แนะนำ (I_N)</div>
+        <div class="rmain" id="cb_out">—<small>A</small></div>
+        <div class="rrows">
+          <div class="rrow"><span class="k">กระแสออกแบบ I_B</span><span class="v" id="cb_ib">—</span></div>
+          <div class="rrow"><span class="k">ตัวคูณลด รวม</span><span class="v" id="cb_k">—</span></div>
+          <div class="rrow"><span class="k">ampacity สายที่ต้องการ (I_t)</span><span class="v" id="cb_it">—</span></div>
+        </div>
+        <div class="note">เงื่อนไข วสท.: I_B ≤ I_N ≤ I_Z &nbsp;•&nbsp; I_t = I_N / (Ca·Cg·Ci) — เลือกสายจากตาราง ampacity ที่ค่า ≥ I_t</div>
+      </div>
+    </section>
+
+    <!-- ============ VOLTAGE DROP ============ -->
+    <section class="card" id="card-vd">
+      <div class="eyebrow">แรงดันตก (Voltage Drop)</div>
+      <div class="grid">
+        <div class="field"><label>ระบบ</label><select id="vd_sys"><option value="3">3 เฟส</option><option value="1">1 เฟส</option></select></div>
+        <div class="field"><label>แรงดัน V_nom</label><div class="u" data-u="V"><input id="vd_v" type="number" inputmode="decimal" value="400"></div></div>
+        <div class="field"><label>กระแส I</label><div class="u" data-u="A"><input id="vd_i" type="number" inputmode="decimal" value="40"></div></div>
+        <div class="field"><label>ระยะสาย L</label><div class="u" data-u="m"><input id="vd_l" type="number" inputmode="decimal" value="120"></div></div>
+        <div class="field full"><label>ค่าจากตารางสาย (mV/A/m)</label><input id="vd_mv" type="number" inputmode="decimal" value="2.8" step="0.1"></div>
+      </div>
+      <div class="readout">
+        <div class="rlabel">แรงดันตก</div>
+        <div class="rmain" id="vd_pct">—<small>%</small></div>
+        <div class="rrows">
+          <div class="rrow"><span class="k">แรงดันตก (โวลต์)</span><span class="v" id="vd_volt">—</span></div>
+          <div class="rrow"><span class="k">แรงดันปลายสาย</span><span class="v" id="vd_end">—</span></div>
+        </div>
+        <span class="chip" id="vd_chip"><span class="dot"></span><span id="vd_ct">—</span></span>
+        <div class="note">เกณฑ์ วสท.: แรงดันตกรวมจากหม้อแปลง/ต้นทาง ≤ 5% (แนะนำวงจรย่อย ≤ 3%). ค่า mV/A/m อ่านจากคอลัมน์ที่ตรงกับระบบ 1φ/3φ ของตารางผู้ผลิตสาย</div>
+      </div>
+    </section>
+
+    <!-- ============ MOTOR ============ -->
+    <section class="card" id="card-mtr">
+      <div class="eyebrow">กระแสมอเตอร์ &amp; การสตาร์ท</div>
+      <div class="grid">
+        <div class="field"><label>กำลัง P</label><div class="u" data-u="kW"><input id="m_kw" type="number" inputmode="decimal" value="7.5"></div></div>
+        <div class="field"><label>แรงดัน V</label><div class="u" data-u="V"><input id="m_v" type="number" inputmode="decimal" value="400"></div></div>
+        <div class="field"><label>Power Factor</label><input id="m_pf" type="number" inputmode="decimal" value="0.86" step="0.01"></div>
+        <div class="field"><label>ประสิทธิภาพ η</label><div class="u" data-u="%"><input id="m_eff" type="number" inputmode="decimal" value="89"></div></div>
+        <div class="field full"><label>วิธีสตาร์ท</label><select id="m_start">
+          <option value="6">DOL (Direct On Line) ×6</option>
+          <option value="2">Star–Delta (Y-Δ) ×2</option>
+          <option value="3">Soft Starter ×3</option>
+          <option value="1.5">VSD / Inverter ×1.5</option>
+        </select></div>
+      </div>
+      <div class="readout">
+        <div class="rlabel">กระแสพิกัด (FLC)</div>
+        <div class="rmain" id="m_flc">—<small>A</small></div>
+        <div class="rrows">
+          <div class="rrow"><span class="k">กระแสสตาร์ท (โดยประมาณ)</span><span class="v" id="m_start_i">—</span></div>
+          <div class="rrow"><span class="k">CB/OL ตั้งต้น (~1.25×FLC)</span><span class="v" id="m_cb">—</span></div>
+        </div>
+        <div class="note">FLC = P / (√3·V·cosφ·η) สำหรับ 3 เฟส. กระแสสตาร์ทเป็นค่าประมาณตาม locked-rotor ทั่วไป — ตรวจสอบกับ nameplate/Code letter จริงของมอเตอร์</div>
+      </div>
+    </section>
+
+    <!-- ============ EARTHING ============ -->
+    <section class="card" id="card-gnd">
+      <div class="eyebrow">ความต้านทานหลักดิน (Earthing Rod)</div>
+      <div class="grid">
+        <div class="field"><label>ความต้านทานดิน ρ</label><div class="u" data-u="Ω·m"><input id="g_rho" type="number" inputmode="decimal" value="100"></div></div>
+        <div class="field"><label>ยาวแท่ง L</label><div class="u" data-u="m"><input id="g_l" type="number" inputmode="decimal" value="3"></div></div>
+        <div class="field"><label>เส้นผ่าศก. d</label><div class="u" data-u="mm"><input id="g_d" type="number" inputmode="decimal" value="16"></div></div>
+        <div class="field"><label>จำนวนแท่ง n</label><input id="g_n" type="number" inputmode="numeric" value="1"></div>
+        <div class="field full"><label>ประสิทธิภาพกลุ่มแท่ง F (0.5–1.0)</label><input id="g_f" type="number" inputmode="decimal" value="1.0" step="0.05"></div>
+      </div>
+      <div class="readout">
+        <div class="rlabel">ความต้านทานรวม R</div>
+        <div class="rmain" id="g_out">—<small>Ω</small></div>
+        <div class="rrows">
+          <div class="rrow"><span class="k">R ต่อแท่งเดี่ยว</span><span class="v" id="g_single">—</span></div>
+        </div>
+        <span class="chip" id="g_chip"><span class="dot"></span><span id="g_ct">—</span></span>
+        <div class="note">สูตร Dwight: R = ρ/(2πL)·[ln(8L/d) − 1]. กลุ่มแท่ง: R_รวม ≈ R/(n·F). เกณฑ์ทั่วไป วสท. ≤ 5 Ω (ระบบป้องกันฟ้าผ่า/สื่อสารอาจต้องการ ≤ 1 Ω)</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    E&amp;I Calc · v1.0 — เครื่องมือช่วยประเมิน ตรวจสอบกับมาตรฐาน วสท./IEC และวิศวกรผู้รับผิดชอบก่อนนำไปใช้จริง
+  </footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const fmt=(n,d=1)=>isFinite(n)?Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
+const CB=[6,10,16,20,25,32,40,50,63,80,100,125,160,200,250,320,400,500,630,800,1000,1250];
+const nextCB=x=>CB.find(c=>c>=x)||('>'+CB[CB.length-1]);
+
+// Tabs
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.card').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on'); $('card-'+t.dataset.t).classList.add('on');
+});
+
+// CB mode toggle
+document.querySelectorAll('#cb-mode button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#cb-mode button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  const kw=b.dataset.m==='kw';
+  $('cb-load-kw').style.display=kw?'':'none';
+  $('cb-load-a').style.display=kw?'none':'';
+  calcCB();
+});
+
+function calcCB(){
+  const sys=+$('cb_sys').value, v=+$('cb_v').value, pf=+$('cb_pf').value;
+  const kwMode=$('cb-mode').querySelector('.on').dataset.m==='kw';
+  let ib;
+  if(kwMode){const p=+$('cb_kw').value*1000; ib=sys==3? p/(Math.sqrt(3)*v*pf) : p/(v*pf);}
+  else ib=+$('cb_a').value;
+  const k=(+$('cb_ca').value)*(+$('cb_cg').value)*(+$('cb_ci').value);
+  const inCB=nextCB(ib);
+  const it=(typeof inCB==='number'?inCB:CB[CB.length-1])/k;
+  $('cb_out').innerHTML=(typeof inCB==='number'?inCB:inCB)+'<small>A</small>';
+  $('cb_ib').innerHTML=fmt(ib,1)+' <small>A</small>';
+  $('cb_k').innerHTML=fmt(k,3);
+  $('cb_it').innerHTML=fmt(it,1)+' <small>A</small>';
+}
+
+function calcVD(){
+  const sys=+$('vd_sys').value,v=+$('vd_v').value,i=+$('vd_i').value,l=+$('vd_l').value,mv=+$('vd_mv').value;
+  const vd=mv*i*l/1000;
+  const pct=v>0?vd/v*100:0;
+  $('vd_pct').innerHTML=fmt(pct,2)+'<small>%</small>';
+  $('vd_volt').innerHTML=fmt(vd,1)+' <small>V</small>';
+  $('vd_end').innerHTML=fmt(v-vd,1)+' <small>V</small>';
+  const ok=pct<=5;
+  const c=$('vd_chip'); c.className='chip '+(ok?'pass':'fail');
+  $('vd_ct').textContent=ok?'ผ่านเกณฑ์ ≤ 5%':'เกิน 5% — ต้องเพิ่มขนาดสาย';
+}
+
+function calcMtr(){
+  const p=+$('m_kw').value*1000,v=+$('m_v').value,pf=+$('m_pf').value,eff=+$('m_eff').value/100,mult=+$('m_start').value;
+  const flc=p/(Math.sqrt(3)*v*pf*eff);
+  $('m_flc').innerHTML=fmt(flc,1)+'<small>A</small>';
+  $('m_start_i').innerHTML=fmt(flc*mult,0)+' <small>A</small>';
+  $('m_cb').innerHTML=nextCB(flc*1.25)+' <small>A</small>';
+}
+
+function calcGnd(){
+  const rho=+$('g_rho').value,L=+$('g_l').value,d=+$('g_d').value/1000,n=+$('g_n').value||1,F=+$('g_f').value||1;
+  const R=(rho/(2*Math.PI*L))*(Math.log(8*L/d)-1);
+  const Rt=R/(n*F);
+  $('g_out').innerHTML=fmt(Rt,2)+'<small>Ω</small>';
+  $('g_single').innerHTML=fmt(R,2)+' <small>Ω</small>';
+  const ok=Rt<=5;
+  const c=$('g_chip'); c.className='chip '+(ok?'pass':'fail');
+  $('g_ct').textContent=ok?'ผ่านเกณฑ์ ≤ 5 Ω':'เกิน 5 Ω — เพิ่มแท่ง/ปรับปรุงดิน';
+}
+
+// bind all inputs
+document.querySelectorAll('#card-cb input,#card-cb select').forEach(e=>e.addEventListener('input',calcCB));
+document.querySelectorAll('#card-vd input,#card-vd select').forEach(e=>e.addEventListener('input',calcVD));
+document.querySelectorAll('#card-mtr input,#card-mtr select').forEach(e=>e.addEventListener('input',calcMtr));
+document.querySelectorAll('#card-gnd input,#card-gnd select').forEach(e=>e.addEventListener('input',calcGnd));
+calcCB();calcVD();calcMtr();calcGnd();
+
+// register service worker (works when hosted over https)
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+</script>
+</body>
+</html>
