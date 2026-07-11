@@ -1,6 +1,6 @@
 /* Service worker เฉพาะโมดูล "ค้นหาข้อมูล" — scope = /eecalc/lookup/ เท่านั้น
    สำคัญ: ลบเฉพาะแคชที่ขึ้นต้นด้วย eicalc-lookup- จึงไม่แตะแคชของแอปหลัก (v10) */
-const CACHE='eicalc-lookup-v1';
+const CACHE='eicalc-lookup-v2';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png'];
 
 self.addEventListener('install',e=>{
