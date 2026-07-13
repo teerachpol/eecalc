@@ -121,13 +121,15 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:20px 16px 30px;
         <div class="field"><label>แรงดัน V_nom</label><div class="u" data-u="V"><input id="vd_v" type="number" inputmode="decimal" value="400"></div></div>
         <div class="field"><label>กระแส I</label><div class="u" data-u="A"><input id="vd_i" type="number" inputmode="decimal" value="40"></div></div>
         <div class="field"><label>ระยะสาย L</label><div class="u" data-u="m"><input id="vd_l" type="number" inputmode="decimal" value="120"></div></div>
-        <div class="field full"><label>ค่าจากตารางสาย (mV/A/m)</label><input id="vd_mv" type="number" inputmode="decimal" value="2.8" step="0.1"></div>
+        <div class="field"><label>ชนิดสาย (ตาราง วสท. ฐ)</label><select id="vd_type"></select></div>
+        <div class="field"><label>ขนาดสาย</label><select id="vd_size"></select></div>
+        <div class="field full"><label>ค่า mV/A/m (แก้ไขเองได้)</label><input id="vd_mv" type="number" inputmode="decimal" value="0.80" step="0.01"></div>
       </div>
       <div class="readout"><div class="rlabel">แรงดันตก</div><div class="rmain" id="vd_pct">—<small>%</small></div>
         <div class="rrows"><div class="rrow"><span class="k">แรงดันตก (โวลต์)</span><span class="v" id="vd_volt">—</span></div>
         <div class="rrow"><span class="k">แรงดันปลายสาย</span><span class="v" id="vd_end">—</span></div></div>
         <span class="chip" id="vd_chip"><span class="dot"></span><span id="vd_ct">—</span></span>
-        <div class="note">เกณฑ์ วสท.: แรงดันตกรวม ≤ 5% (แนะนำวงจรย่อย ≤ 3%)</div></div>
+        <div class="note">เกณฑ์ วสท.: แรงดันตกรวม ≤ 5% (แนะนำวงจรย่อย ≤ 3%). ค่า mV/A/m จาก วสท.2564 ภาคผนวก ฐ (ตาราง ฐ.1–ฐ.4) เลือก 1เฟส/3เฟส อัตโนมัติตามระบบ. แกนเดียวใช้ค่ากลุ่ม 1,2,5 (เรียงชิด/trefoil) — เรียงห่างปรับค่าเองเล็กน้อย</div></div>
     </section>
 
     <section class="card" id="card-mtr">
@@ -227,7 +229,7 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:20px 16px 30px;
         <div class="note">วสท. 5.15.4: สาย ≥95 ตร.มม. วางชั้นเดียว Σd ≤ กว้างราง (5.15.4.1.1) • สาย &lt;95 ใช้ Σพท. ≤ ตาราง 5-7 (5.15.4.1.2) • ผสม X−30.5·Σd ≥ Σพท. (5.15.4.1.3). Ventilated ใช้เกณฑ์เดียวกับ Ladder</div></div>
     </section>
   </main>
-  <footer>E&amp;I Calc · v2.6 — อ้างอิง วสท.2564 / มอก. / IEC — เครื่องมือช่วยประเมิน ตรวจสอบกับวิศวกรผู้รับผิดชอบก่อนใช้จริง</footer>
+  <footer>E&amp;I Calc · v2.8 — อ้างอิง วสท.2564 / มอก. / IEC — เครื่องมือช่วยประเมิน ตรวจสอบกับวิศวกรผู้รับผิดชอบก่อนใช้จริง</footer>
 </div>
 
 <script>
@@ -247,6 +249,15 @@ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelect
 
 document.querySelectorAll('#cb-mode button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#cb-mode button').forEach(x=>x.classList.remove('on'));b.classList.add('on');const kw=b.dataset.m==='kw';$('cb-load-kw').style.display=kw?'':'none';$('cb-load-a').style.display=kw?'none':'';calcCB();});
 function calcCB(){const sys=+$('cb_sys').value,v=+$('cb_v').value,pf=+$('cb_pf').value;const kwMode=$('cb-mode').querySelector('.on').dataset.m==='kw';let ib;if(kwMode){const p=+$('cb_kw').value*1000;ib=sys==3?p/(Math.sqrt(3)*v*pf):p/(v*pf);}else ib=+$('cb_a').value;const k=(+$('cb_ca').value)*(+$('cb_cg').value)*(+$('cb_ci').value);const inCB=nextCB(ib);const it=(typeof inCB==='number'?inCB:CB[CB.length-1])/k;$('cb_out').innerHTML=inCB+'<small>A</small>';$('cb_ib').innerHTML=fmt(ib,1)+' <small>A</small>';$('cb_k').innerHTML=fmt(k,3);$('cb_it').innerHTML=fmt(it,1)+' <small>A</small>';}
+const VDT={
+'PVC-M':{l:'PVC หลายแกน',d:{'1':[44,38],'1.5':[29,25],'2.5':[18,15],'4':[11,9.5],'6':[7.3,6.4],'10':[4.4,3.8],'16':[2.8,2.4],'25':[1.75,1.50],'35':[1.25,1.10],'50':[0.93,0.80],'70':[0.65,0.57],'95':[0.49,0.43],'120':[0.41,0.36],'150':[0.34,0.29],'185':[0.29,0.25],'240':[0.24,0.21],'300':[0.21,0.18],'400':[0.17,0.15]}},
+'PVC-S':{l:'PVC แกนเดียว',d:{'1':[44,38],'1.5':[29,25],'2.5':[18,15],'4':[11,9.5],'6':[7.3,6.4],'10':[4.4,3.8],'16':[2.8,2.4],'25':[1.81,1.52],'35':[1.33,1.13],'50':[1.00,0.85],'70':[0.71,0.61],'95':[0.56,0.48],'120':[0.48,0.40],'150':[0.41,0.35],'185':[0.36,0.31],'240':[0.30,0.27],'300':[0.27,0.24],'400':[0.25,0.22],'500':[0.23,0.20]}},
+'XLPE-M':{l:'XLPE หลายแกน',d:{'1':[46,40],'1.5':[31,27],'2.5':[19,16],'4':[12,10],'6':[7.9,6.8],'10':[4.7,4.0],'16':[2.9,2.5],'25':[1.85,1.60],'35':[1.35,1.15],'50':[0.99,0.86],'70':[0.68,0.60],'95':[0.52,0.44],'120':[0.42,0.36],'150':[0.35,0.31],'185':[0.30,0.25],'240':[0.24,0.22],'300':[0.21,0.18],'400':[0.19,0.16]}},
+'XLPE-S':{l:'XLPE แกนเดียว',d:{'1':[46,40],'1.5':[31,27],'2.5':[19,16],'4':[12,10],'6':[7.9,6.8],'10':[4.7,4.0],'16':[2.9,2.5],'25':[1.85,1.60],'35':[1.37,1.17],'50':[1.04,0.91],'70':[0.75,0.65],'95':[0.58,0.50],'120':[0.49,0.42],'150':[0.42,0.37],'185':[0.37,0.32],'240':[0.32,0.27],'300':[0.28,0.24],'400':[0.25,0.22],'500':[0.23,0.20]}}
+};
+function fillVDType(){const s=$('vd_type');s.innerHTML='';Object.keys(VDT).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=VDT[k].l;s.appendChild(o);});s.value='PVC-M';buildVDSizes(false);applyVDpick();}
+function buildVDSizes(keep){const t=VDT[$('vd_type').value];const s=$('vd_size');const cur=keep?s.value:null;s.innerHTML='';Object.keys(t.d).forEach(sz=>{const o=document.createElement('option');o.value=sz;o.textContent=sz+' mm²';s.appendChild(o);});if(cur&&t.d[cur])s.value=cur;else if(t.d['50'])s.value='50';else s.value=Object.keys(t.d)[0];}
+function applyVDpick(){const t=$('vd_type').value,sz=$('vd_size').value;const rec=VDT[t]&&VDT[t].d[sz];if(!rec)return;const ph=(+$('vd_sys').value===1)?0:1;$('vd_mv').value=rec[ph];calcVD();}
 function calcVD(){const v=+$('vd_v').value,i=+$('vd_i').value,l=+$('vd_l').value,mv=+$('vd_mv').value;const vd=mv*i*l/1000;const pct=v>0?vd/v*100:0;$('vd_pct').innerHTML=fmt(pct,2)+'<small>%</small>';$('vd_volt').innerHTML=fmt(vd,1)+' <small>V</small>';$('vd_end').innerHTML=fmt(v-vd,1)+' <small>V</small>';const ok=pct<=5;$('vd_chip').className='chip '+(ok?'pass':'fail');$('vd_ct').textContent=ok?'ผ่านเกณฑ์ ≤ 5%':'เกิน 5% — เพิ่มขนาดสาย';}
 function calcMtr(){const p=+$('m_kw').value*1000,v=+$('m_v').value,pf=+$('m_pf').value,eff=+$('m_eff').value/100,mult=+$('m_start').value;const flc=p/(Math.sqrt(3)*v*pf*eff);$('m_flc').innerHTML=fmt(flc,1)+'<small>A</small>';$('m_start_i').innerHTML=fmt(flc*mult,0)+' <small>A</small>';$('m_cb').innerHTML=fmt(flc*1.25,1)+' <small>A</small>';}
 function calcGnd(){const rho=+$('g_rho').value,L=+$('g_l').value,d=+$('g_d').value/1000,n=+$('g_n').value||1,F=+$('g_f').value||1;const R=(rho/(2*Math.PI*L))*(Math.log(8*L/d)-1);const Rt=R/(n*F);$('g_out').innerHTML=fmt(Rt,2)+'<small>Ω</small>';$('g_single').innerHTML=fmt(R,2)+' <small>Ω</small>';const ok=Rt<=5;$('g_chip').className='chip '+(ok?'pass':'fail');$('g_ct').textContent=ok?'ผ่านเกณฑ์ ≤ 5 Ω':'เกิน 5 Ω — เพิ่มแท่ง/ปรับปรุงดิน';}
@@ -311,6 +322,10 @@ function calcCT(){
 const CALC={cf:calcCF,ww:calcWW,ct:calcCT};
 document.querySelectorAll('#card-cb input,#card-cb select').forEach(e=>e.addEventListener('input',calcCB));
 document.querySelectorAll('#card-vd input,#card-vd select').forEach(e=>e.addEventListener('input',calcVD));
+$('vd_type').addEventListener('change',()=>{buildVDSizes(true);applyVDpick();});
+$('vd_size').addEventListener('change',applyVDpick);
+$('vd_sys').addEventListener('change',applyVDpick);
+fillVDType();
 document.querySelectorAll('#card-mtr input,#card-mtr select').forEach(e=>e.addEventListener('input',calcMtr));
 document.querySelectorAll('#card-gnd input,#card-gnd select').forEach(e=>e.addEventListener('input',calcGnd));
 $('cf_type').addEventListener('change',calcCF);$('cf_rsv').addEventListener('change',calcCF);
